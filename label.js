@@ -71,7 +71,6 @@
     box(2, 2, pageW - 2, pageH - 2);
 
     var addr = order.address || {};
-    var contact = order.contact || {};
     var payMethod = (order.payment && order.payment.method) ? order.payment.method.toUpperCase() : 'PREPAID';
 
     // ---------- Row: Store name | Payment mode ----------
@@ -136,7 +135,6 @@
     if (addr.street) sy = wrapped(addr.street, left + 3, sy, addrColW, 4.2);
     var cityLine = [addr.city, addr.state, addr.pin].filter(Boolean).join(', ');
     if (cityLine) sy = wrapped(cityLine, left + 3, sy, addrColW, 4.2);
-    if (contact.phone) { doc.setFont('helvetica', 'bold'); doc.text('Ph: ' + esc(contact.phone), left + 3, sy); doc.setFont('helvetica', 'normal'); }
 
     label('ORDER', col3X + 3, y + 4.5);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
