@@ -80,21 +80,41 @@ Deno.serve(async (req: Request) => {
       return json({ error: `Delhivery label HTTP ${res.status}` }, 502);
     }
     const buf = new Uint8Array(await res.arrayBuffer());
-    // Delhivery can return 200 OK with a non-PDF body (an HTML error page,
-    // a JSON message) on edge cases the status code alone doesn't catch —
-    // e.g. hitting this right after shipment creation, before Delhivery has
-    // finished generating the manifest. Downloading that as "label.pdf"
-    // gives a file that downloads fine but won't open, so verify the PDF
-    // magic bytes before trusting the response.
-    const isPdf = buf.length >= 4 && buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46; // "%PDF"
-    if (!isPdf) {
-      const preview = new TextDecoder().decode(buf.slice(0, 300)).trim();
-      return json({
-        error: `Delhivery returned something other than a PDF for this label (waybill ${waybill}). This usually means the manifest is still processing — wait a minute and try again. If it keeps happening: ${preview || "(empty response)"}`,
-      }, 502);
+    const isPdfBytes = (b: Uint8Array) => b.length >= 4 && b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46; // "%PDF"
+
+    let pdfBytes: Uint8Array;
+    if (isPdfBytes(buf)) {
+      pdfBytes = buf;
+    } else {
+      // packing_slip?pdf=true doesn't actually return the PDF bytes — it
+      // returns JSON with a pre-signed S3 link (packages[0].pdf_download_link)
+      // to fetch the real file from. Follow that instead of handing the
+      // browser this JSON body as if it were "label.pdf".
+      const text = new TextDecoder().decode(buf);
+      let downloadLink: string | undefined;
+      try {
+        const parsed = JSON.parse(text);
+        downloadLink = parsed?.packages?.[0]?.pdf_download_link;
+      } catch (_e) { /* not JSON either — fall through to the error below */ }
+
+      if (!downloadLink) {
+        return json({
+          error: `Delhivery didn't return a label or a download link for waybill ${waybill}. This usually means the manifest is still processing — wait a minute and try again. Response: ${text.slice(0, 300) || "(empty)"}`,
+        }, 502);
+      }
+
+      const pdfRes = await fetch(downloadLink);
+      if (!pdfRes.ok) {
+        return json({ error: `Could not download the label PDF from Delhivery's storage (HTTP ${pdfRes.status}).` }, 502);
+      }
+      pdfBytes = new Uint8Array(await pdfRes.arrayBuffer());
+      if (!isPdfBytes(pdfBytes)) {
+        return json({ error: `The file at Delhivery's download link for waybill ${waybill} wasn't a valid PDF either.` }, 502);
+      }
     }
+
     let binary = "";
-    for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
+    for (let i = 0; i < pdfBytes.length; i++) binary += String.fromCharCode(pdfBytes[i]);
     return json({ waybill, pdfBase64: btoa(binary) });
   }
 
