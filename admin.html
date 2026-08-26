@@ -12,8 +12,10 @@
 <script src="misticraft-data.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="invoice.js"></script>
 <script src="label.js"></script>
+<script src="combo-slip.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
@@ -681,6 +683,7 @@ body[data-page="admin"]{ background:#fbf9f4; }
 <button type="button" id="lg-auto-create-btn" onclick="autoCreateDelhiveryLabel()" class="btn w-full py-3 bg-secondary text-on-secondary font-label-sm text-label-sm uppercase tracking-widest hover:brightness-110 flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[18px]">bolt</span> Auto-Create Delhivery Label</button>
 <button type="button" id="lg-download-label-btn" onclick="downloadDelhiveryLabel()" class="hidden btn w-full py-3 mt-2 border border-secondary text-secondary font-label-sm text-label-sm uppercase tracking-widest hover:bg-secondary hover:text-on-secondary transition-colors flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[18px]">download</span> Download Label PDF</button>
 <button type="button" id="lg-print-custom-label-btn" onclick="printCustomLabel()" class="hidden btn w-full py-3 mt-2 border border-outline-variant text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[18px]">receipt</span> Print Custom Label</button>
+<button type="button" id="lg-download-combo-btn" onclick="downloadComboSlip()" class="hidden btn w-full py-3 mt-2 border border-outline-variant text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[18px]">description</span> Download Label + Invoice (1 page)</button>
 <p id="lg-auto-create-status" class="hidden font-label-sm text-label-sm mt-2"></p>
 </div>
 
@@ -716,6 +719,7 @@ body[data-page="admin"]{ background:#fbf9f4; }
 const qs = (s,el=document)=>el.querySelector(s);
 const qsa = (s,el=document)=>Array.from(el.querySelectorAll(s));
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 /* ---------- Preloader ---------- */
 (function(){
@@ -1901,6 +1905,7 @@ function refreshLogisticsAutoCreateUI(){
   qs('#lg-auto-create-btn').classList.toggle('hidden', hasWaybill);
   qs('#lg-download-label-btn').classList.toggle('hidden', !hasWaybill);
   qs('#lg-print-custom-label-btn').classList.toggle('hidden', !hasWaybill);
+  qs('#lg-download-combo-btn').classList.toggle('hidden', !hasWaybill);
   qs('#lg-auto-create-status').classList.add('hidden');
 }
 function orderAddressHTML(o){
@@ -2015,6 +2020,42 @@ async function downloadDelhiveryLabel(){
     btn.removeAttribute('disabled');
   }
 }
+async function downloadComboSlip(){
+  const orderId = qs('#lg-order-id').value;
+  const order = LIVE_CUSTOMER_ORDERS.find(function(o){ return o.id === orderId; });
+  if(!order){ toast('Order not found', 'error'); return; }
+  const btn = qs('#lg-download-combo-btn');
+  const statusEl = qs('#lg-auto-create-status');
+  btn.setAttribute('disabled', 'disabled');
+  statusEl.className = 'font-label-sm text-label-sm mt-2 text-on-surface-variant';
+  statusEl.textContent = 'Preparing combined slip…';
+  statusEl.classList.remove('hidden');
+  // Try to embed Delhivery's real label; if it's unavailable for any
+  // reason (permissions, manifest still processing, network), fall
+  // back to mistiCRAFT's own drawn label instead of blocking the
+  // whole document — a combined slip with our own label beats none.
+  let courierPdfBase64 = null;
+  try {
+    const result = await mistiData.createDelhiveryShipment(orderId, 'label');
+    const byteChars = atob(result.pdfBase64);
+    const bytes = new Uint8Array(byteChars.length);
+    for(let i = 0; i < byteChars.length; i++) bytes[i] = byteChars.charCodeAt(i);
+    const isPdf = bytes.length >= 4 && bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46;
+    if(isPdf) courierPdfBase64 = result.pdfBase64;
+  } catch (e) { /* fall back below */ }
+  try {
+    const ok = window.mistiComboSlip && await window.mistiComboSlip.generate(order, LATEST_SETTINGS, courierPdfBase64);
+    if(!ok) throw new Error('Could not generate the combined slip — check your connection.');
+    statusEl.classList.add('hidden');
+  } catch (e) {
+    statusEl.className = 'font-label-sm text-label-sm mt-2 text-error';
+    statusEl.textContent = e.message || 'Could not generate the combined slip.';
+    statusEl.classList.remove('hidden');
+  } finally {
+    btn.removeAttribute('disabled');
+  }
+}
+window.downloadComboSlip = downloadComboSlip;
 function printCustomLabel(){
   const orderId = qs('#lg-order-id').value;
   const order = LIVE_CUSTOMER_ORDERS.find(function(o){ return o.id === orderId; });

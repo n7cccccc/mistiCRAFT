@@ -17,6 +17,15 @@
    with nothing on file is simply left off rather than shown blank or
    invented, and if JsBarcode didn't load, the waybill still prints as
    plain text.
+
+   drawLabel() draws the label onto ANY existing jsPDF doc at any
+   position/size (used by combo-slip.js to place a shrunk label
+   alongside an invoice on one page) — all of its internal layout math
+   stays in the label's native 101.6x152.4mm coordinate space and is
+   mapped to real page coordinates only at the point of drawing, via
+   the X()/Y()/S() (position/size) and textWidthNative() helpers. This
+   keeps a single source of truth for the label's design: generate()
+   is just drawLabel() at x0=0,y0=0,scale=1 on a dedicated 4x6" page.
    ============================================================ */
 (function (root) {
   function esc(s) { return String(s == null ? '' : s); }
@@ -34,36 +43,44 @@
     }
   }
 
-  function buildDoc(order, settings) {
-    if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
-      console.error('mistiCRAFT label: jsPDF did not load — check your network connection.');
-      return null;
-    }
+  // Native label size — every layout coordinate below is expressed in
+  // this space regardless of where/how big the label ends up on the
+  // real page.
+  var NATIVE_W = 101.6, NATIVE_H = 152.4;
+
+  function drawLabel(doc, order, settings, x0, y0, scale) {
+    x0 = x0 || 0; y0 = y0 || 0; scale = scale || 1;
     settings = settings || {};
-    var jsPDF = window.jspdf.jsPDF;
-    // Standard 4x6" shipping label.
-    var doc = new jsPDF({ unit: 'mm', format: [101.6, 152.4] });
-    var pageW = doc.internal.pageSize.getWidth();
-    var pageH = doc.internal.pageSize.getHeight();
+
+    var pageW = NATIVE_W, pageH = NATIVE_H;
     var left = 3, right = pageW - 3;
     var innerW = right - left;
     var y = 3;
 
+    function X(v) { return x0 + v * scale; }
+    function Y(v) { return y0 + v * scale; }
+    function S(v) { return v * scale; }
+    // Measures text at the currently-set (already-scaled) font size,
+    // then converts back to native units so it can be compared against
+    // the native-unit layout math (left/right/priceColX/etc.) below.
+    function textWidthNative(text) { return doc.getTextWidth(text) / scale; }
+
     doc.setDrawColor(0);
 
-    function hLine(yPos) { doc.setLineWidth(0.35); doc.line(left, yPos, right, yPos); }
-    function vLine(xPos, y1, y2) { doc.setLineWidth(0.35); doc.line(xPos, y1, xPos, y2); }
-    function box(x1, y1, x2, y2) { doc.setLineWidth(0.35); doc.rect(x1, y1, x2 - x1, y2 - y1); }
+    function hLine(yPos) { doc.setLineWidth(S(0.35)); doc.line(X(left), Y(yPos), X(right), Y(yPos)); }
+    function vLine(xPos, y1, y2) { doc.setLineWidth(S(0.35)); doc.line(X(xPos), Y(y1), X(xPos), Y(y2)); }
+    function box(x1, y1, x2, y2) { doc.setLineWidth(S(0.35)); doc.rect(X(x1), Y(y1), S(x2 - x1), S(y2 - y1)); }
     function label(text, x, yPos, opts) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(110);
-      doc.text(text, x, yPos, opts || {});
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(S(6.5)); doc.setTextColor(110);
+      doc.text(text, X(x), Y(yPos), opts || {});
       doc.setTextColor(0);
     }
-    // Prints text wrapped to maxW and returns the y position after it, so a
-    // wrapped line doesn't get overwritten by whatever prints next.
+    // Prints text wrapped to maxW (native units) and returns the native
+    // y position after it, so a wrapped line doesn't get overwritten by
+    // whatever prints next.
     function wrapped(text, x, yStart, maxW, lineH) {
-      var lines = doc.splitTextToSize(esc(text), maxW);
-      doc.text(lines, x, yStart);
+      var lines = doc.splitTextToSize(esc(text), S(maxW));
+      doc.text(lines, X(x), Y(yStart));
       return yStart + lines.length * lineH;
     }
 
@@ -77,12 +94,12 @@
     var row1Bottom = y + 15;
     var col1X = left + innerW * 0.62;
     vLine(col1X, y, row1Bottom);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
-    doc.text('mistiCRAFT', left + 3, y + 8);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
-    doc.text('Handcrafted goods', left + 3, y + 12.5);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
-    doc.text(esc(payMethod), col1X + (right - col1X) / 2, y + 9.5, { align: 'center' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(S(15));
+    doc.text('mistiCRAFT', X(left + 3), Y(y + 8));
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(7));
+    doc.text('Handcrafted goods', X(left + 3), Y(y + 12.5));
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(S(11));
+    doc.text(esc(payMethod), X(col1X + (right - col1X) / 2), Y(y + 9.5), { align: 'center' });
     y = row1Bottom;
     hLine(y);
 
@@ -97,27 +114,27 @@
     var by = y + 4;
     if (barcode) {
       var bw = (col2X - left) - 8, bh = 16;
-      doc.addImage(barcode, 'PNG', left + 4, by, bw, bh);
+      doc.addImage(barcode, 'PNG', X(left + 4), Y(by), S(bw), S(bh));
       by += bh + 4;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-      doc.text(waybill || '—', bcCenterX, by, { align: 'center' });
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(S(9));
+      doc.text(waybill || '—', X(bcCenterX), Y(by), { align: 'center' });
     } else {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-      doc.text(waybill || '—', bcCenterX, y + 18, { align: 'center', maxWidth: col2X - left - 6 });
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(S(18));
+      doc.text(waybill || '—', X(bcCenterX), Y(y + 18), { align: 'center', maxWidth: S(col2X - left - 6) });
     }
     by += 5;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
-    doc.text(esc(order.transporter || 'Courier not yet assigned'), bcCenterX, by, { align: 'center' });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(7.5));
+    doc.text(esc(order.transporter || 'Courier not yet assigned'), X(bcCenterX), Y(by), { align: 'center' });
 
     var pinCenterX = col2X + (right - col2X) / 2;
     label('DESTINATION PIN', pinCenterX, y + 6, { align: 'center' });
     if (addr.pin) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(24);
-      doc.text(esc(addr.pin), pinCenterX, y + 20, { align: 'center' });
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(S(24));
+      doc.text(esc(addr.pin), X(pinCenterX), Y(y + 20), { align: 'center' });
     }
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(8));
     var cityState = [addr.city, addr.state].filter(Boolean).join(', ');
-    if (cityState) doc.text(cityState, pinCenterX, y + 27, { align: 'center', maxWidth: right - col2X - 4 });
+    if (cityState) doc.text(cityState, X(pinCenterX), Y(y + 27), { align: 'center', maxWidth: S(right - col2X - 4) });
 
     y = row2Bottom;
     hLine(y);
@@ -130,18 +147,18 @@
     label('SHIP TO', left + 3, y + 4.5);
     var addrColW = col3X - left - 6;
     var sy = y + 10;
-    if (addr.name) { doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); sy = wrapped(addr.name, left + 3, sy, addrColW, 5); }
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+    if (addr.name) { doc.setFont('helvetica', 'bold'); doc.setFontSize(S(10.5)); sy = wrapped(addr.name, left + 3, sy, addrColW, 5); }
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(8.5));
     if (addr.street) sy = wrapped(addr.street, left + 3, sy, addrColW, 4.2);
     var cityLine = [addr.city, addr.state, addr.pin].filter(Boolean).join(', ');
     if (cityLine) sy = wrapped(cityLine, left + 3, sy, addrColW, 4.2);
 
     label('ORDER', col3X + 3, y + 4.5);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
-    doc.text(esc(order.orderNumber), col3X + 3, y + 10, { maxWidth: right - col3X - 6 });
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(S(8.5));
+    doc.text(esc(order.orderNumber), X(col3X + 3), Y(y + 10), { maxWidth: S(right - col3X - 6) });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(7.5));
     var dateStr = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
-    if (dateStr) doc.text(dateStr, col3X + 3, y + 15);
+    if (dateStr) doc.text(dateStr, X(col3X + 3), Y(y + 15));
 
     y = row3Bottom;
     hLine(y);
@@ -149,13 +166,13 @@
     // ---------- Row: Ship From (seller) ----------
     var row4Bottom = y + 13;
     label('SHIP FROM', left + 3, y + 4.5);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-    doc.text('mistiCRAFT', left + 3, y + 9.5);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(S(9));
+    doc.text('mistiCRAFT', X(left + 3), Y(y + 9.5));
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(7.5));
     var fromLoc = settings.delhivery_pickup_location || '';
     var fromContact = [settings.store_phone, settings.store_email].filter(Boolean).join('  ·  ');
     var fromLine = [fromLoc, fromContact].filter(Boolean).join('   —   ');
-    if (fromLine) doc.text(fromLine, left + 28, y + 9.5, { maxWidth: innerW - 28 });
+    if (fromLine) doc.text(fromLine, X(left + 28), Y(y + 9.5), { maxWidth: S(innerW - 28) });
 
     y = row4Bottom;
     hLine(y);
@@ -170,10 +187,10 @@
     var tableBottom = y + 6 + tableBodyH + 6; // header + rows + total row
 
     var priceColX = right - 32, totalColX = right - 3;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(0);
-    doc.text('PRODUCT', left + 3, y + 4.5);
-    doc.text('PRICE', priceColX, y + 4.5, { align: 'right' });
-    doc.text('TOTAL', totalColX, y + 4.5, { align: 'right' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(S(7.5)); doc.setTextColor(0);
+    doc.text('PRODUCT', X(left + 3), Y(y + 4.5));
+    doc.text('PRICE', X(priceColX), Y(y + 4.5), { align: 'right' });
+    doc.text('TOTAL', X(totalColX), Y(y + 4.5), { align: 'right' });
     hLine(y + 6);
 
     // Truncate with an ellipsis rather than letting jsPDF wrap a long name
@@ -182,37 +199,56 @@
     // depends on this row's own price text, not a fixed guess, since
     // right-aligned text at priceColX extends left by its own width.
     function truncate(text, maxW) {
-      if (doc.getTextWidth(text) <= maxW) return text;
-      while (text.length > 1 && doc.getTextWidth(text + '…') > maxW) text = text.slice(0, -1);
+      if (textWidthNative(text) <= maxW) return text;
+      while (text.length > 1 && textWidthNative(text + '…') > maxW) text = text.slice(0, -1);
       return text + '…';
     }
 
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(S(7.5));
     var ry = y + 6 + rowH - 1.5;
     shown.forEach(function (it) {
       var qty = Number(it.qty) || 1;
       var name = esc(it.name) + (qty > 1 ? (' (' + qty + ')') : '') + (it.size ? (' · ' + esc(it.size)) : '');
       var priceText = money(it.price);
-      var nameColW = priceColX - doc.getTextWidth(priceText) - left - 6;
-      doc.text(truncate(name, nameColW), left + 3, ry);
-      doc.text(priceText, priceColX, ry, { align: 'right' });
-      doc.text(money((Number(it.price) || 0) * qty), totalColX, ry, { align: 'right' });
+      var nameColW = priceColX - textWidthNative(priceText) - left - 6;
+      doc.text(truncate(name, nameColW), X(left + 3), Y(ry));
+      doc.text(priceText, X(priceColX), Y(ry), { align: 'right' });
+      doc.text(money((Number(it.price) || 0) * qty), X(totalColX), Y(ry), { align: 'right' });
       ry += rowH;
     });
     if (items.length > maxRows) {
-      doc.setFont('helvetica', 'italic'); doc.setFontSize(7);
-      doc.text('+ ' + (items.length - maxRows) + ' more item' + (items.length - maxRows === 1 ? '' : 's'), left + 3, ry);
+      doc.setFont('helvetica', 'italic'); doc.setFontSize(S(7));
+      doc.text('+ ' + (items.length - maxRows) + ' more item' + (items.length - maxRows === 1 ? '' : 's'), X(left + 3), Y(ry));
       ry += rowH;
     }
 
     hLine(y + 6 + tableBodyH);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
-    doc.text('TOTAL', priceColX, y + 6 + tableBodyH + 4.5, { align: 'right' });
-    doc.text(money(order.total), totalColX, y + 6 + tableBodyH + 4.5, { align: 'right' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(S(8.5));
+    doc.text('TOTAL', X(priceColX), Y(y + 6 + tableBodyH + 4.5), { align: 'right' });
+    doc.text(money(order.total), X(totalColX), Y(y + 6 + tableBodyH + 4.5), { align: 'right' });
 
     y = tableBottom;
     hLine(y);
 
+    // The label's actual visual footprint is the fixed-size outer
+    // border (pageH - 2), not tableBottom — that's just where the
+    // content happens to end, which is usually well short of the
+    // border on a short order. Returning tableBottom here would make
+    // combo-slip.js think the label ends way above its real border,
+    // and place the next section right on top of the blank space
+    // still inside that border.
+    return Y(pageH - 2);
+  }
+
+  function buildDoc(order, settings) {
+    if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
+      console.error('mistiCRAFT label: jsPDF did not load — check your network connection.');
+      return null;
+    }
+    var jsPDF = window.jspdf.jsPDF;
+    // Standard 4x6" shipping label.
+    var doc = new jsPDF({ unit: 'mm', format: [NATIVE_W, NATIVE_H] });
+    drawLabel(doc, order, settings, 0, 0, 1);
     return doc;
   }
 
@@ -228,5 +264,11 @@
     return doc ? doc.output('blob') : null;
   }
 
-  root.mistiLabel = { generate: generate, generateBlob: generateBlob };
+  root.mistiLabel = {
+    generate: generate,
+    generateBlob: generateBlob,
+    drawLabel: drawLabel,
+    NATIVE_W: NATIVE_W,
+    NATIVE_H: NATIVE_H,
+  };
 })(window);
