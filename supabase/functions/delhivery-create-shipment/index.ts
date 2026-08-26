@@ -80,6 +80,19 @@ Deno.serve(async (req: Request) => {
       return json({ error: `Delhivery label HTTP ${res.status}` }, 502);
     }
     const buf = new Uint8Array(await res.arrayBuffer());
+    // Delhivery can return 200 OK with a non-PDF body (an HTML error page,
+    // a JSON message) on edge cases the status code alone doesn't catch —
+    // e.g. hitting this right after shipment creation, before Delhivery has
+    // finished generating the manifest. Downloading that as "label.pdf"
+    // gives a file that downloads fine but won't open, so verify the PDF
+    // magic bytes before trusting the response.
+    const isPdf = buf.length >= 4 && buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46; // "%PDF"
+    if (!isPdf) {
+      const preview = new TextDecoder().decode(buf.slice(0, 300)).trim();
+      return json({
+        error: `Delhivery returned something other than a PDF for this label (waybill ${waybill}). This usually means the manifest is still processing — wait a minute and try again. If it keeps happening: ${preview || "(empty response)"}`,
+      }, 502);
+    }
     let binary = "";
     for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
     return json({ waybill, pdfBase64: btoa(binary) });
