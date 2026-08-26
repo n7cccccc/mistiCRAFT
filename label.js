@@ -8,15 +8,19 @@
    available (e.g. Delhivery's Packing Slip API needs a separate
    permission some accounts don't have yet) — this generates a
    self-contained 4x6" shipping label straight from the order data
-   already on file, no external API call needed. Styled after a
-   real courier label: bordered sections, a big destination pincode
-   for hub sorters, and a scannable Code128 barcode of the waybill
-   (rendered via JsBarcode to a canvas, then embedded as an image —
-   jsPDF has no barcode support of its own). If JsBarcode didn't
-   load, it degrades gracefully to just the printed waybill number.
+   already on file, no external API call needed. Laid out as bordered
+   grid sections (header / barcode+pincode / ship-to+order / ship-from
+   / itemized total) like a real courier label, using jsPDF rect()
+   for the borders and JsBarcode (rendered to a canvas, embedded as an
+   image — jsPDF has no barcode support of its own) for the Code128
+   waybill barcode. Degrades gracefully — no fabricated data: a field
+   with nothing on file is simply left off rather than shown blank or
+   invented, and if JsBarcode didn't load, the waybill still prints as
+   plain text.
    ============================================================ */
 (function (root) {
   function esc(s) { return String(s == null ? '' : s); }
+  function money(n) { return 'Rs. ' + Math.round(Number(n) || 0).toLocaleString('en-IN'); }
 
   function barcodeDataUrl(text) {
     if (typeof window.JsBarcode === 'undefined' || !text) return null;
@@ -41,96 +45,175 @@
     var doc = new jsPDF({ unit: 'mm', format: [101.6, 152.4] });
     var pageW = doc.internal.pageSize.getWidth();
     var pageH = doc.internal.pageSize.getHeight();
-    var marginX = 5;
-    var innerW = pageW - marginX * 2;
-    var y = 8;
+    var left = 3, right = pageW - 3;
+    var innerW = right - left;
+    var y = 3;
 
-    function hr(y1) { doc.setDrawColor(0); doc.setLineWidth(0.4); doc.line(marginX, y1, pageW - marginX, y1); }
-    function section(label) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
-      doc.setTextColor(90);
-      doc.text(label, marginX, y);
+    doc.setDrawColor(0);
+
+    function hLine(yPos) { doc.setLineWidth(0.35); doc.line(left, yPos, right, yPos); }
+    function vLine(xPos, y1, y2) { doc.setLineWidth(0.35); doc.line(xPos, y1, xPos, y2); }
+    function box(x1, y1, x2, y2) { doc.setLineWidth(0.35); doc.rect(x1, y1, x2 - x1, y2 - y1); }
+    function label(text, x, yPos, opts) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(110);
+      doc.text(text, x, yPos, opts || {});
       doc.setTextColor(0);
-      y += 4;
+    }
+    // Prints text wrapped to maxW and returns the y position after it, so a
+    // wrapped line doesn't get overwritten by whatever prints next.
+    function wrapped(text, x, yStart, maxW, lineH) {
+      var lines = doc.splitTextToSize(esc(text), maxW);
+      doc.text(lines, x, yStart);
+      return yStart + lines.length * lineH;
     }
 
     // Outer border, like a real courier label.
-    doc.setDrawColor(0); doc.setLineWidth(0.6);
-    doc.rect(2, 2, pageW - 4, pageH - 4);
+    box(2, 2, pageW - 2, pageH - 2);
 
-    // Header: store + payment mode badge
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
-    doc.text('mistiCRAFT', marginX, y);
-    doc.setDrawColor(0); doc.setLineWidth(0.4);
-    doc.rect(pageW - marginX - 26, y - 5, 26, 6.5);
-    doc.setFontSize(9);
-    doc.text('PREPAID', pageW - marginX - 13, y - 0.7, { align: 'center' });
-    y += 6;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
-    var fromLine = settings.delhivery_pickup_location || 'Pickup location not set';
-    doc.text('From: ' + esc(fromLine), marginX, y);
-    y += 3.3;
-    var fromContact = [settings.store_phone, settings.store_email].filter(Boolean).join('  ·  ');
-    if (fromContact) { doc.text(esc(fromContact), marginX, y); y += 3.3; }
-
-    y += 1.5;
-    hr(y); y += 5;
-
-    // Destination pincode — big, for quick hub sorting, like real labels.
     var addr = order.address || {};
     var contact = order.contact || {};
-    if (addr.pin) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
-      doc.text('DESTINATION PIN', pageW / 2, y, { align: 'center' }); y += 8;
-      doc.setFontSize(26);
-      doc.text(esc(addr.pin), pageW / 2, y, { align: 'center' }); y += 5;
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
-      doc.text([addr.city, addr.state].filter(Boolean).join(', '), pageW / 2, y, { align: 'center' });
-      y += 5;
-      hr(y); y += 5;
-    }
+    var payMethod = (order.payment && order.payment.method) ? order.payment.method.toUpperCase() : 'PREPAID';
 
-    // Barcode of the waybill.
+    // ---------- Row: Store name | Payment mode ----------
+    var row1Bottom = y + 15;
+    var col1X = left + innerW * 0.62;
+    vLine(col1X, y, row1Bottom);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
+    doc.text('mistiCRAFT', left + 3, y + 8);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+    doc.text('Handcrafted goods', left + 3, y + 12.5);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.text(esc(payMethod), col1X + (right - col1X) / 2, y + 9.5, { align: 'center' });
+    y = row1Bottom;
+    hLine(y);
+
+    // ---------- Row: Barcode + waybill | Destination PIN ----------
+    var row2Bottom = y + 38;
+    var col2X = left + innerW * 0.6;
+    vLine(col2X, y, row2Bottom);
+
     var waybill = String(order.trackingId || '').trim();
     var barcode = barcodeDataUrl(waybill);
+    var bcCenterX = left + (col2X - left) / 2;
+    var by = y + 4;
     if (barcode) {
-      var bw = innerW - 14, bh = 14;
-      doc.addImage(barcode, 'PNG', (pageW - bw) / 2, y, bw, bh);
-      y += bh + 2;
+      var bw = (col2X - left) - 8, bh = 16;
+      doc.addImage(barcode, 'PNG', left + 4, by, bw, bh);
+      by += bh + 4;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+      doc.text(waybill || '—', bcCenterX, by, { align: 'center' });
+    } else {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+      doc.text(waybill || '—', bcCenterX, y + 18, { align: 'center', maxWidth: col2X - left - 6 });
     }
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(barcode ? 11 : 20);
-    doc.text(waybill || '—', pageW / 2, y, { align: 'center' });
-    y += barcode ? 4 : 5;
+    by += 5;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
-    doc.text(esc(order.transporter || ''), pageW / 2, y, { align: 'center' });
-    y += 4;
+    doc.text(esc(order.transporter || 'Courier not yet assigned'), bcCenterX, by, { align: 'center' });
 
-    hr(y); y += 5;
-
-    // Ship To
-    section('SHIP TO');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
-    if (addr.name) { doc.text(esc(addr.name), marginX, y, { maxWidth: innerW }); y += 5.5; }
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
-    if (addr.street) { doc.text(esc(addr.street), marginX, y, { maxWidth: innerW }); y += 5; }
-    var cityLine = [addr.city, addr.state, addr.pin].filter(Boolean).join(', ');
-    if (cityLine) { doc.text(cityLine, marginX, y, { maxWidth: innerW }); y += 5; }
-    if (addr.country) { doc.text(esc(addr.country), marginX, y); y += 5; }
-    if (contact.phone) { doc.setFont('helvetica', 'bold'); doc.text('Ph: ' + esc(contact.phone), marginX, y); doc.setFont('helvetica', 'normal'); y += 5; }
-
-    y += 1;
-    hr(y); y += 5;
-
-    // Order + item summary
-    section('ORDER DETAILS');
+    var pinCenterX = col2X + (right - col2X) / 2;
+    label('DESTINATION PIN', pinCenterX, y + 6, { align: 'center' });
+    if (addr.pin) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(24);
+      doc.text(esc(addr.pin), pinCenterX, y + 20, { align: 'center' });
+    }
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
-    doc.text('Order: ' + esc(order.orderNumber), marginX, y);
+    var cityState = [addr.city, addr.state].filter(Boolean).join(', ');
+    if (cityState) doc.text(cityState, pinCenterX, y + 27, { align: 'center', maxWidth: right - col2X - 4 });
+
+    y = row2Bottom;
+    hLine(y);
+
+    // ---------- Row: Ship To | Order info ----------
+    var row3Bottom = y + 36;
+    var col3X = left + innerW * 0.66;
+    vLine(col3X, y, row3Bottom);
+
+    label('SHIP TO', left + 3, y + 4.5);
+    var addrColW = col3X - left - 6;
+    var sy = y + 10;
+    if (addr.name) { doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); sy = wrapped(addr.name, left + 3, sy, addrColW, 5); }
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+    if (addr.street) sy = wrapped(addr.street, left + 3, sy, addrColW, 4.2);
+    var cityLine = [addr.city, addr.state, addr.pin].filter(Boolean).join(', ');
+    if (cityLine) sy = wrapped(cityLine, left + 3, sy, addrColW, 4.2);
+    if (contact.phone) { doc.setFont('helvetica', 'bold'); doc.text('Ph: ' + esc(contact.phone), left + 3, sy); doc.setFont('helvetica', 'normal'); }
+
+    label('ORDER', col3X + 3, y + 4.5);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+    doc.text(esc(order.orderNumber), col3X + 3, y + 10, { maxWidth: right - col3X - 6 });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
     var dateStr = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
-    if (dateStr) doc.text(dateStr, pageW - marginX, y, { align: 'right' });
-    y += 5;
+    if (dateStr) doc.text(dateStr, col3X + 3, y + 15);
+
+    y = row3Bottom;
+    hLine(y);
+
+    // ---------- Row: Ship From (seller) ----------
+    var row4Bottom = y + 13;
+    label('SHIP FROM', left + 3, y + 4.5);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+    doc.text('mistiCRAFT', left + 3, y + 9.5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+    var fromLoc = settings.delhivery_pickup_location || '';
+    var fromContact = [settings.store_phone, settings.store_email].filter(Boolean).join('  ·  ');
+    var fromLine = [fromLoc, fromContact].filter(Boolean).join('   —   ');
+    if (fromLine) doc.text(fromLine, left + 28, y + 9.5, { maxWidth: innerW - 28 });
+
+    y = row4Bottom;
+    hLine(y);
+
+    // ---------- Row: Itemized products ----------
     var items = order.items || [];
-    var qty = items.reduce(function (sum, it) { return sum + (Number(it.qty) || 1); }, 0);
-    doc.text(qty + ' item' + (qty === 1 ? '' : 's') + (items.length ? (': ' + items.map(function (it) { return it.name; }).filter(Boolean).join(', ')) : ''), marginX, y, { maxWidth: innerW });
+    var maxRows = 5;
+    var shown = items.slice(0, maxRows);
+    var rowH = 5;
+    var extraRow = items.length > maxRows ? 1 : 0; // "+ N more items" line
+    var tableBodyH = (Math.max(shown.length, 1) + extraRow) * rowH;
+    var tableBottom = y + 6 + tableBodyH + 6; // header + rows + total row
+
+    var priceColX = right - 32, totalColX = right - 3;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(0);
+    doc.text('PRODUCT', left + 3, y + 4.5);
+    doc.text('PRICE', priceColX, y + 4.5, { align: 'right' });
+    doc.text('TOTAL', totalColX, y + 4.5, { align: 'right' });
+    hLine(y + 6);
+
+    // Truncate with an ellipsis rather than letting jsPDF wrap a long name
+    // to a second line — every row here is a fixed height, so a wrapped
+    // line would print on top of the row below it. The available width
+    // depends on this row's own price text, not a fixed guess, since
+    // right-aligned text at priceColX extends left by its own width.
+    function truncate(text, maxW) {
+      if (doc.getTextWidth(text) <= maxW) return text;
+      while (text.length > 1 && doc.getTextWidth(text + '…') > maxW) text = text.slice(0, -1);
+      return text + '…';
+    }
+
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+    var ry = y + 6 + rowH - 1.5;
+    shown.forEach(function (it) {
+      var qty = Number(it.qty) || 1;
+      var name = esc(it.name) + (qty > 1 ? (' (' + qty + ')') : '') + (it.size ? (' · ' + esc(it.size)) : '');
+      var priceText = money(it.price);
+      var nameColW = priceColX - doc.getTextWidth(priceText) - left - 6;
+      doc.text(truncate(name, nameColW), left + 3, ry);
+      doc.text(priceText, priceColX, ry, { align: 'right' });
+      doc.text(money((Number(it.price) || 0) * qty), totalColX, ry, { align: 'right' });
+      ry += rowH;
+    });
+    if (items.length > maxRows) {
+      doc.setFont('helvetica', 'italic'); doc.setFontSize(7);
+      doc.text('+ ' + (items.length - maxRows) + ' more item' + (items.length - maxRows === 1 ? '' : 's'), left + 3, ry);
+      ry += rowH;
+    }
+
+    hLine(y + 6 + tableBodyH);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+    doc.text('TOTAL', priceColX, y + 6 + tableBodyH + 4.5, { align: 'right' });
+    doc.text(money(order.total), totalColX, y + 6 + tableBodyH + 4.5, { align: 'right' });
+
+    y = tableBottom;
+    hLine(y);
 
     return doc;
   }
