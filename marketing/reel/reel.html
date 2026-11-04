@@ -21,58 +21,62 @@
   .bar{height:4px;background:var(--gold);margin:22px 0 0}
   .blurbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(40px) brightness(.55)}
   #flash{position:absolute;inset:0;background:#fbf9f4;opacity:0;pointer-events:none}
+  .price{display:inline-block;margin-top:26px;padding:14px 30px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.06em}
+  .tag{position:absolute;left:80px;top:260px;padding:14px 26px;background:#9c4421;color:#fff;font-weight:700;font-size:28px;letter-spacing:.2em;text-transform:uppercase;border-radius:4px}
 </style></head>
 <body><div id="stage">
-  <!-- A: logo over workshop -->
+  <!-- A: HOOK on the hoop close-up -->
   <div class="scene" id="A"><img class="media" id="Av">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.88) 0%,rgba(27,28,25,.62) 45%,rgba(27,28,25,.9) 100%)"></div>
-    <div class="txt" style="top:520px"><img id="Alogo" src="assets/logo-gold.png" style="width:380px;height:380px"></div>
-    <div class="txt" style="top:950px"><div class="h" id="Aname" style="font-size:130px">misti<span style="color:var(--gold)">CRAFT</span></div>
-      <div class="eyebrow" id="Aeb" style="margin-top:30px">Udaipur · Rajasthan</div></div>
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.85) 0%,rgba(27,28,25,.25) 38%,rgba(27,28,25,0) 60%)"></div>
+    <div class="txt" style="top:250px"><div class="eyebrow" id="Aeb">Every single piece</div>
+      <div class="h" id="Ah" style="margin-top:20px;font-size:116px"><span id="Anum">14</span> hours</div>
+      <div class="h it" id="Ah2" style="font-size:92px">of hand embroidery</div></div>
   </div>
   <!-- B: artisan -->
   <div class="scene" id="B"><img class="media" id="Bv">
     <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.0) 45%,rgba(27,28,25,.85) 88%)"></div>
-    <div class="txt" style="top:1180px"><div class="h" id="Bh">Stitched <span class="it">by hand</span></div>
+    <div class="txt" style="top:1150px"><div class="h" id="Bh">Stitched <span class="it">by hand</span></div>
       <div class="sub" id="Bs">by the women artisans of Udaipur</div></div>
   </div>
-  <!-- C: hoop -->
+  <!-- C: logo reveal over the workshop -->
   <div class="scene" id="C"><img class="media" id="Cv">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.8) 0%,rgba(27,28,25,0) 35%)"></div>
-    <div class="txt" style="top:260px"><div class="eyebrow" id="Ceb">Every motif</div>
-      <div class="h" id="Ch" style="margin-top:18px">One thread<br><span class="it">at a time</span></div></div>
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.88) 0%,rgba(27,28,25,.62) 45%,rgba(27,28,25,.9) 100%)"></div>
+    <div class="txt" style="top:520px"><img id="Clogo" src="assets/logo-gold.png" style="width:360px;height:360px"></div>
+    <div class="txt" style="top:930px"><div class="h" id="Cname" style="font-size:130px">misti<span style="color:var(--gold)">CRAFT</span></div>
+      <div class="eyebrow" id="Ceb" style="margin-top:30px">Udaipur · Rajasthan</div></div>
   </div>
-  <!-- D: sunflower shirt -->
+  <!-- D: Handmade embroidery shirt -->
   <div class="scene" id="D"><img class="media" id="Di" src="assets/sunflower-shirt.png">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 50%,rgba(27,28,25,.8) 85%)"></div>
-    <div class="label" id="Dl"><div class="eyebrow">Hand-embroidered</div><div class="name">Sunflower<br>Camp Shirt</div><div class="bar" id="Db"></div></div>
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.85) 82%)"></div>
+    <div class="label" id="Dl"><div class="eyebrow">Linen · Hand embroidery</div><div class="name">Handmade<br>Embroidery Shirt</div><div class="price">MRP ₹2,999</div></div>
   </div>
-  <!-- E: wildflower shirt -->
+  <!-- E: Back embroidery white shirt -->
   <div class="scene" id="E"><img class="media" id="Ei" src="assets/wildflower-shirt.jpg">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 50%,rgba(27,28,25,.75) 85%)"></div>
-    <div class="label" id="El"><div class="eyebrow">Hand-embroidered</div><div class="name">Wildflower<br>Linen Shirt</div><div class="bar" id="Eb"></div></div>
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.85) 82%)"></div>
+    <div class="label" id="El"><div class="eyebrow">Floral embroidery · Cotton blend</div><div class="name">Back Embroidery<br>White Shirt</div><div class="price">MRP ₹2,899</div></div>
   </div>
-  <!-- F: mint top -->
+  <!-- F: Handmade kantha stitch top -->
   <div class="scene" id="F"><div class="blurbg" style="background-image:url(assets/mint-top.png)"></div><img class="media" id="Fi" src="assets/mint-top.png">
     <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.92) 82%)"></div>
-    <div class="label" id="Fl"><div class="eyebrow">Hand-embroidered</div><div class="name">Mint<br>Running-Stitch Top</div><div class="bar" id="Fb"></div></div>
+    <div class="tag" id="Ft">New arrival</div>
+    <div class="label" id="Fl"><div class="eyebrow">Kantha stitch &amp; mirror work</div><div class="name">Handmade<br>Kantha Stitch Top</div><div class="price">MRP ₹1,499</div></div>
   </div>
   <!-- G: workshop wide -->
   <div class="scene" id="G"><img class="media" id="Gv">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.85) 0%,rgba(27,28,25,.2) 40%)"></div>
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.88) 0%,rgba(27,28,25,.2) 42%)"></div>
     <div class="txt" style="top:250px"><div class="h" id="Gh" style="font-size:96px">40+ women<br><span class="it">artisans</span></div>
       <div class="sub" id="Gs">Fair wages · Healthcare · Organic cotton</div></div>
   </div>
   <!-- H: end card -->
   <div class="scene" id="H" style="background:radial-gradient(900px 1100px at 540px 860px,#2a3a36 0%,#1b1c19 70%)">
-    <div class="txt" style="top:400px"><img id="Hlogo" src="assets/logo-gold.png" style="width:340px;height:340px"></div>
-    <div class="txt" style="top:790px"><div class="h" id="Hname" style="font-size:124px">misti<span style="color:var(--gold)">CRAFT</span></div>
-      <div style="height:3px;background:var(--gold);margin:36px auto;width:0" id="Hrule"></div>
+    <div class="txt" style="top:360px"><img id="Hlogo" src="assets/logo-gold.png" style="width:330px;height:330px"></div>
+    <div class="txt" style="top:740px"><div class="h" id="Hname" style="font-size:124px">misti<span style="color:var(--gold)">CRAFT</span></div>
+      <div style="height:3px;background:var(--gold);margin:34px auto;width:0" id="Hrule"></div>
       <div class="serif it" id="Htag" style="font-size:60px;line-height:1.25">Heritage, hand-stitched<br>for the modern world.</div>
-      <div id="Hcta" style="display:inline-block;margin-top:70px;padding:28px 64px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.18em;text-transform:uppercase">Shop now · Link in bio</div>
-      <div class="eyebrow" id="Hh" style="margin-top:44px;text-transform:none;letter-spacing:.15em;font-size:36px">@misticraft</div></div>
+      <div id="Hcta" style="display:inline-block;margin-top:64px;padding:28px 64px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.16em;text-transform:uppercase">Shop now · Link in bio</div>
+      <div class="sub" id="Hship" style="margin-top:36px;color:#d9d3c6;font-size:32px">Shipped worldwide from Udaipur</div>
+      <div class="eyebrow" id="Hh" style="margin-top:26px;text-transform:none;letter-spacing:.15em;font-size:36px">@misticraft</div></div>
   </div>
-  <div id="flash"></div>
 </div>
 <script>
 const FPS=30,DUR=20;
@@ -80,54 +84,49 @@ const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const lin=(t,a,b)=>clamp((t-a)/(b-a));
 const eo=x=>1-Math.pow(1-x,3);
 const $=id=>document.getElementById(id);
-const pop=(id,t,a,d=.5,dy=40)=>{const p=eo(lin(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${dy*(1-p)}px)`};
-const XF=.3; // crossfade length
-// [id, start, end, videoFolder, videoFrames]
-const S=[['A',0,3.0,'wide',90],['B',3.0,6.0,'artisan',90],['C',6.0,8.0,'hoop',60],
-         ['D',8.0,10.4],['E',10.4,12.8],['F',12.8,15.2],['G',15.2,17.2,'wide2',60],['H',17.2,20]];
+const pop=(id,t,a,d=.45,dy=40)=>{const p=eo(lin(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${dy*(1-p)}px)`};
+const XF=.25;
+// [id, start, end, videoFolder, frames available]
+const S=[['A',0,2.0,'hoop',60],['B',2.0,4.5,'artisan',90],['C',4.5,6.5,'wide',90],
+         ['D',6.5,9.0],['E',9.0,11.5],['F',11.5,14.0],['G',14.0,16.0,'wide2',60],['H',16.0,20]];
 const VDIR=window.VDIR||'frames';
 async function render(t){
   const waits=[];
   S.forEach(([id,a,b,vd,vn],k)=>{
-    const last=k==S.length-1;
-    const op=Math.min(lin(t,a-(k?XF:0)+ (k?0:-1),a+(k?0:0)+.0001)*(k?1:1), last?1:1-lin(t,b,b+XF));
-    const vis=t>=a-(k?XF:0)&&t<b+(last?1:XF);
-    const el=$(id);el.style.opacity=vis?(k==0?1-lin(t,b,b+XF):op):0;
-    if(k>0&&vis&&t<a)el.style.opacity=lin(t,a-XF,a);
-    if(!vis)return;
-    const lt=t-a;
-    if(vd){const img=$(id+'v');const n=clamp(Math.floor(lt*FPS),0,vn-1)+1;
+    const last=k==S.length-1, el=$(id);
+    const vis=t>=a-(k?XF:0)&&t<(last?99:b+XF);
+    if(!vis){el.style.opacity=0;return;}
+    // incoming scene fades in over the outgoing one (later DOM = on top)
+    el.style.opacity=k&&t<a?eo(lin(t,a-XF,a)):1;
+    if(vd){const img=$(id+'v');const n=clamp(Math.floor((t-a+XF)*FPS),0,vn-1)+1;
       const src=`${VDIR}/${vd}/${String(n).padStart(4,'0')}.jpg`;
       if(!img.src.endsWith(src)){img.src=src;waits.push(img.decode().catch(()=>{}));}
-      const z=1.0+.06*lin(t,a-XF,b+XF);img.style.width='1080px';img.style.height='1920px';
+      const z=1.0+.07*lin(t,a-XF,b+XF);img.style.width='1080px';img.style.height='1920px';
       img.style.transform=`scale(${z})`;img.style.transformOrigin='50% 45%';}
   });
-  // stack order: later scene on top during crossfades (DOM order already ascending)
-  // --- A
-  pop('Alogo',t,.15,.8,0);$('Alogo').style.transform=`scale(${.85+.15*eo(lin(t,.15,1.1))})`;
-  pop('Aname',t,.7,.6);pop('Aeb',t,1.1,.6,20);
-  // --- B / C / G text
-  pop('Bh',t,3.35,.55);pop('Bs',t,3.75,.55,20);
-  pop('Ceb',t,6.2,.45,20);pop('Ch',t,6.4,.5);
-  pop('Gh',t,15.4,.55);pop('Gs',t,15.8,.5,20);
-  // --- product photos (Ken Burns)
-  photo('Di',1254,1254,t,8.0,10.4,{cx:.53,cy:.52,z0:1.12,z1:1.0});
-  photo('Ei',1080,1124,t,10.4,12.8,{cx:.53,cy:.38,z0:1.0,z1:1.12});
-  // F: start tight on the embroidery, pull back to show the full top
-  (function(){const im=$('Fi'),p=eo(lin(t,12.8,15.0));const fitW=1080,fitH=1370*1080/1148;
-    const s=1.7-0.7*p; const w=fitW*s,h=fitH*s;const cyImg=.42; // focus point (embroidery)
-    const x=540-w*.5, y=(1920*(.46*(1-p)+.40*p))-h*(cyImg*(1-p)+.5*p);
+  // A hook: counter 0 -> 14
+  pop('Aeb',t,.05,.35,20);pop('Ah',t,.15,.4);pop('Ah2',t,.55,.4,30);
+  $('Anum').textContent=Math.round(eo(lin(t,.15,1.1))*14);
+  pop('Bh',t,2.25,.45);pop('Bs',t,2.6,.45,20);
+  $('Clogo').style.opacity=eo(lin(t,4.55,5.2));$('Clogo').style.transform=`scale(${.82+.18*eo(lin(t,4.55,5.4))})`;
+  pop('Cname',t,4.95,.5);pop('Ceb',t,5.3,.45,20);
+  pop('Gh',t,14.2,.5);pop('Gs',t,14.55,.45,20);
+  photo('Di',1254,1254,t,6.5,9.0,{cx:.53,cy:.52,z0:1.14,z1:1.0});
+  photo('Ei',1080,1124,t,9.0,11.5,{cx:.53,cy:.36,z0:1.0,z1:1.14});
+  (function(){const im=$('Fi'),p=eo(lin(t,11.5,13.8));const fitW=1080,fitH=1370*1080/1148;
+    const s=1.7-0.7*p; const w=fitW*s,h=fitH*s;
+    const x=540-w*.5, y=(1920*(.46*(1-p)+.40*p))-h*(.42*(1-p)+.5*p);
     im.style.width=w+'px';im.style.height=h+'px';im.style.transform=`translate(${x}px,${y}px)`;})();
-  [['Dl','Db',8.0],['El','Eb',10.4],['Fl','Fb',12.8]].forEach(([l,bar,a])=>{pop(l,t,a+.25,.5);$(bar).style.width=(eo(lin(t,a+.5,a+1.1))*220)+'px'});
-  // --- H
-  $('Hlogo').style.opacity=eo(lin(t,17.35,18.0));$('Hlogo').style.transform=`scale(${.8+.2*eo(lin(t,17.35,18.2))}) rotate(${-8*(1-eo(lin(t,17.35,18.4)))}deg)`;
-  pop('Hname',t,17.7,.55);$('Hrule').style.width=(eo(lin(t,18.0,18.6))*320)+'px';
-  pop('Htag',t,18.1,.55,25);pop('Hcta',t,18.5,.5,25);pop('Hh',t,18.8,.5,15);
-  // white flash on the cut from video to products
-  $('flash').style.opacity=0*Math.max(0,1-Math.abs(t-8.0)/.12);
+  [['Dl',6.5],['El',9.0],['Fl',11.5]].forEach(([l,a])=>{pop(l,t,a+.15,.45);
+    const pr=$(l).querySelector('.price');const q=eo(lin(t,a+.55,a+.95));pr.style.opacity=q;pr.style.transform=`scale(${.7+.3*q})`;pr.style.transformOrigin='left center';});
+  {const q=eo(lin(t,11.7,12.1));$('Ft').style.opacity=q;$('Ft').style.transform=`translateX(${-60*(1-q)}px)`;}
+  $('Hlogo').style.opacity=eo(lin(t,16.1,16.7));$('Hlogo').style.transform=`scale(${.8+.2*eo(lin(t,16.1,16.9))}) rotate(${-8*(1-eo(lin(t,16.1,17.1)))}deg)`;
+  pop('Hname',t,16.4,.5);$('Hrule').style.width=(eo(lin(t,16.7,17.3))*320)+'px';
+  pop('Htag',t,16.8,.5,25);pop('Hcta',t,17.2,.45,25);pop('Hship',t,17.5,.45,15);pop('Hh',t,17.7,.45,15);
+  // gentle CTA pulse
+  if(t>18){$('Hcta').style.transform=`scale(${1+.03*Math.sin((t-18)*2*Math.PI*.9)})`;}
   await Promise.all(waits);
 }
-// cover-fit with zoom between z0->z1 around focus (cx,cy as fraction of image)
 function photo(id,iw,ih,t,a,b,o){const im=$(id),p=lin(t,a-XF,b+XF);const base=Math.max(1080/iw,1920/ih);
   const s=base*(o.z0+(o.z1-o.z0)*p);const w=iw*s,h=ih*s;
   let x=540-w*o.cx,y=960-h*o.cy;x=clamp(x,1080-w,0);y=clamp(y,1920-h,0);
