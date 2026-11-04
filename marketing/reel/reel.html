@@ -2,134 +2,185 @@
 <html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#1b1c19;--gold:#e9c176;--cream:#fbf9f4}
+  :root{--ink:#1b1c19;--gold:#e9c176;--bronze:#775a19;--cream:#fbf9f4;--teal:#2a6865;--muted:#4e4639}
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:1080px;height:1920px;overflow:hidden;background:#1b1c19}
   #stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Montserrat,sans-serif;color:var(--cream)}
-  .scene{position:absolute;inset:0;overflow:hidden;opacity:0}
-  .scene img.media{position:absolute;left:0;top:0;will-change:transform}
+  .scene{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden;visibility:hidden}
+  .media{position:absolute;left:0;top:0;width:1080px;height:1920px}
   .shade{position:absolute;inset:0}
-  .txt{position:absolute;left:0;width:100%;text-align:center;padding:0 90px}
-  .eyebrow{font-size:30px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;color:var(--gold)}
-  .serif{font-family:'Playfair Display',serif}
-  .h{font-family:'Playfair Display',serif;font-weight:700;font-size:104px;line-height:1.05;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+  .txt{position:absolute;left:0;width:100%;text-align:center;padding:0 80px}
+  .eyebrow{font-size:28px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;color:var(--gold)}
+  .h{font-family:'Playfair Display',serif;font-weight:700;font-size:104px;line-height:1.05}
   .it{font-style:italic;font-weight:400;color:var(--gold)}
-  .sub{font-size:36px;line-height:1.4;font-weight:500;margin-top:22px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
-  .label{position:absolute;left:80px;bottom:430px;text-align:left}
-  .label .name{font-family:'Playfair Display',serif;font-size:84px;font-weight:700;line-height:1.05;text-shadow:0 4px 28px rgba(0,0,0,.5)}
-  .label .eyebrow{text-shadow:0 2px 12px rgba(0,0,0,.6)}
-  .bar{height:4px;background:var(--gold);margin:22px 0 0}
-  .blurbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(40px) brightness(.55)}
-  #flash{position:absolute;inset:0;background:#fbf9f4;opacity:0;pointer-events:none}
-  .price{display:inline-block;margin-top:26px;padding:14px 30px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.06em}
-  .tag{position:absolute;left:80px;top:260px;padding:14px 26px;background:#9c4421;color:#fff;font-weight:700;font-size:28px;letter-spacing:.2em;text-transform:uppercase;border-radius:4px}
+  .sub{font-size:34px;line-height:1.4;font-weight:500;margin-top:22px}
+  .word{display:inline-block;will-change:transform}
+  .card{position:absolute;border-radius:28px;overflow:hidden;background:#e4e2dd;box-shadow:0 18px 50px rgba(27,28,25,.18)}
+  .card img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
+  .chip{display:inline-block;padding:14px 26px;border-radius:999px;font-weight:600;font-size:26px;letter-spacing:.08em}
+  .dot{display:inline-block;width:14px;height:14px;border-radius:999px;background:#d1c5b4;margin:0 7px;vertical-align:middle}
 </style></head>
 <body><div id="stage">
-  <!-- A: HOOK on the hoop close-up -->
+  <!-- A hook: hoop -->
   <div class="scene" id="A"><img class="media" id="Av">
     <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.85) 0%,rgba(27,28,25,.25) 38%,rgba(27,28,25,0) 60%)"></div>
     <div class="txt" style="top:250px"><div class="eyebrow" id="Aeb">Every single piece</div>
-      <div class="h" id="Ah" style="margin-top:20px;font-size:116px"><span id="Anum">14</span> hours</div>
-      <div class="h it" id="Ah2" style="font-size:92px">of hand embroidery</div></div>
+      <div class="h" style="margin-top:20px;font-size:116px"><span class="word" id="Aw1"><span id="Anum">14</span></span> <span class="word" id="Aw2">hours</span></div>
+      <div class="h it" style="font-size:92px"><span class="word" id="Aw3">of hand</span> <span class="word" id="Aw4">embroidery</span></div></div>
   </div>
-  <!-- B: artisan -->
+  <!-- B artisan -->
   <div class="scene" id="B"><img class="media" id="Bv">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.0) 45%,rgba(27,28,25,.85) 88%)"></div>
-    <div class="txt" style="top:1150px"><div class="h" id="Bh">Stitched <span class="it">by hand</span></div>
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.85) 88%)"></div>
+    <div class="txt" style="top:1150px"><div class="h"><span class="word" id="Bw1">Stitched</span> <span class="word it" id="Bw2">by hand</span></div>
       <div class="sub" id="Bs">by the women artisans of Udaipur</div></div>
   </div>
-  <!-- C: logo reveal over the workshop -->
+  <!-- C logo -->
   <div class="scene" id="C"><img class="media" id="Cv">
     <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.88) 0%,rgba(27,28,25,.62) 45%,rgba(27,28,25,.9) 100%)"></div>
-    <div class="txt" style="top:520px"><img id="Clogo" src="assets/logo-gold.png" style="width:360px;height:360px"></div>
-    <div class="txt" style="top:930px"><div class="h" id="Cname" style="font-size:130px">misti<span style="color:var(--gold)">CRAFT</span></div>
-      <div class="eyebrow" id="Ceb" style="margin-top:30px">Udaipur · Rajasthan</div></div>
+    <div class="txt" style="top:500px"><img id="Clogo" src="assets/logo-gold.png" style="width:360px;height:360px"></div>
+    <div class="txt" style="top:910px"><div class="h" id="Cname" style="font-size:130px">misti<span style="color:var(--gold)">CRAFT</span></div>
+      <div class="eyebrow" id="Ceb" style="margin-top:30px">Udaipur · Since 2018</div></div>
   </div>
-  <!-- D: Handmade embroidery shirt -->
-  <div class="scene" id="D"><img class="media" id="Di" src="assets/sunflower-shirt.png">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.85) 82%)"></div>
-    <div class="label" id="Dl"><div class="eyebrow">Linen · Hand embroidery</div><div class="name">Handmade<br>Embroidery Shirt</div><div class="price">MRP ₹2,999</div></div>
+  <!-- D collection grid (cream sheet) -->
+  <div class="scene" id="D" style="background:var(--cream);border-radius:48px 48px 0 0">
+    <div id="grid" style="position:absolute;left:0;top:0;width:1080px"></div>
+    <div id="Dhead" style="z-index:3;position:absolute;left:0;top:0;width:1080px;height:430px;background:linear-gradient(180deg,#fbf9f4 72%,rgba(251,249,244,0));text-align:center;padding-top:230px">
+      <div class="eyebrow" id="Deb" style="color:var(--bronze)">Fresh from the atelier</div>
+      <div class="h" id="Dh" style="color:var(--ink);font-size:92px;margin-top:14px">The Collection</div></div>
   </div>
-  <!-- E: Back embroidery white shirt -->
-  <div class="scene" id="E"><img class="media" id="Ei" src="assets/wildflower-shirt.jpg">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.85) 82%)"></div>
-    <div class="label" id="El"><div class="eyebrow">Floral embroidery · Cotton blend</div><div class="name">Back Embroidery<br>White Shirt</div><div class="price">MRP ₹2,899</div></div>
+  <!-- E carousel -->
+  <div class="scene" id="E" style="background:var(--cream)">
+    <div id="track" style="position:absolute;left:0;top:0"></div>
+    <div id="Einfo" style="position:absolute;left:0;top:1420px;width:1080px;text-align:center;color:var(--ink)">
+      <div id="Ename" class="h" style="font-size:66px;color:var(--ink)"></div>
+      <div id="Edet" class="eyebrow" style="color:var(--bronze);margin-top:16px;font-size:24px"></div>
+      <div id="dots" style="margin-top:30px"></div></div>
   </div>
-  <!-- F: Handmade kantha stitch top -->
-  <div class="scene" id="F"><div class="blurbg" style="background-image:url(assets/mint-top.png)"></div><img class="media" id="Fi" src="assets/mint-top.png">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.92) 82%)"></div>
-    <div class="tag" id="Ft">New arrival</div>
-    <div class="label" id="Fl"><div class="eyebrow">Kantha stitch &amp; mirror work</div><div class="name">Handmade<br>Kantha Stitch Top</div><div class="price">MRP ₹1,499</div></div>
+  <!-- F workshop -->
+  <div class="scene" id="F"><img class="media" id="Fv">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.9) 0%,rgba(27,28,25,.25) 45%)"></div>
+    <div class="txt" style="top:240px"><div class="h" style="font-size:150px;color:var(--gold)" id="Fnum">40+</div>
+      <div class="h" style="font-size:80px" id="Fh">women artisans</div>
+      <div style="margin-top:34px" id="Fchips">
+        <span class="chip" style="background:rgba(251,249,244,.16);border:2px solid rgba(251,249,244,.5)" id="ch1">Fair wages</span>
+        <span class="chip" style="background:rgba(251,249,244,.16);border:2px solid rgba(251,249,244,.5)" id="ch2">Healthcare</span>
+        <span class="chip" style="background:rgba(251,249,244,.16);border:2px solid rgba(251,249,244,.5)" id="ch3">Organic cotton</span></div></div>
   </div>
-  <!-- G: workshop wide -->
-  <div class="scene" id="G"><img class="media" id="Gv">
-    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.88) 0%,rgba(27,28,25,.2) 42%)"></div>
-    <div class="txt" style="top:250px"><div class="h" id="Gh" style="font-size:96px">40+ women<br><span class="it">artisans</span></div>
-      <div class="sub" id="Gs">Fair wages · Healthcare · Organic cotton</div></div>
-  </div>
-  <!-- H: end card -->
-  <div class="scene" id="H" style="background:radial-gradient(900px 1100px at 540px 860px,#2a3a36 0%,#1b1c19 70%)">
-    <div class="txt" style="top:360px"><img id="Hlogo" src="assets/logo-gold.png" style="width:330px;height:330px"></div>
-    <div class="txt" style="top:740px"><div class="h" id="Hname" style="font-size:124px">misti<span style="color:var(--gold)">CRAFT</span></div>
-      <div style="height:3px;background:var(--gold);margin:34px auto;width:0" id="Hrule"></div>
-      <div class="serif it" id="Htag" style="font-size:60px;line-height:1.25">Heritage, hand-stitched<br>for the modern world.</div>
-      <div id="Hcta" style="display:inline-block;margin-top:64px;padding:28px 64px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.16em;text-transform:uppercase">Shop now · Link in bio</div>
-      <div class="sub" id="Hship" style="margin-top:36px;color:#d9d3c6;font-size:32px">Shipped worldwide from Udaipur</div>
-      <div class="eyebrow" id="Hh" style="margin-top:26px;text-transform:none;letter-spacing:.15em;font-size:36px">@misticraft</div></div>
+  <!-- G end card -->
+  <div class="scene" id="G" style="background:radial-gradient(900px 1100px at 540px 860px,#2a3a36 0%,#1b1c19 70%)">
+    <div class="txt" style="top:340px"><img id="Glogo" src="assets/logo-gold.png" style="width:330px;height:330px"></div>
+    <div class="txt" style="top:720px"><div class="h" id="Gname" style="font-size:124px">misti<span style="color:var(--gold)">CRAFT</span></div>
+      <div style="height:3px;background:var(--gold);margin:34px auto;width:0" id="Grule"></div>
+      <div class="serif it h" id="Gtag" style="font-size:60px;line-height:1.25;font-weight:400">Heritage, hand-stitched<br>for the modern world.</div>
+      <div id="Gcta" style="display:inline-block;margin-top:64px;padding:28px 64px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.16em;text-transform:uppercase">Shop the collection</div>
+      <div class="sub" id="Gship" style="margin-top:34px;color:#d9d3c6;font-size:32px">Link in bio · Shipped worldwide</div>
+      <div class="eyebrow" id="Gh" style="margin-top:24px;text-transform:none;letter-spacing:.15em;font-size:36px">@misticraft</div></div>
   </div>
 </div>
 <script>
-const FPS=30,DUR=20;
+const FPS=30,DUR=24;
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const lin=(t,a,b)=>clamp((t-a)/(b-a));
 const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const spring=x=>x<=0?0:x>=1?1:1-Math.exp(-6.5*x)*Math.cos(10.5*x);   // Figma-style gentle spring
+const mix=(a,b,p)=>a+(b-a)*p;
 const $=id=>document.getElementById(id);
-const pop=(id,t,a,d=.45,dy=40)=>{const p=eo(lin(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${dy*(1-p)}px)`};
-const XF=.25;
-// [id, start, end, videoFolder, frames available]
-const S=[['A',0,2.0,'hoop',60],['B',2.0,4.5,'artisan',90],['C',4.5,6.5,'wide',90],
-         ['D',6.5,9.0],['E',9.0,11.5],['F',11.5,14.0],['G',14.0,16.0,'wide2',60],['H',16.0,20]];
 const VDIR=window.VDIR||'frames';
+// spring "pop" for a text element
+function pop(id,t,a,d=.6,dy=60){const e=$(id),p=spring(lin(t,a,a+d));e.style.opacity=clamp(lin(t,a,a+d*.35));e.style.transform=`translateY(${dy*(1-p)}px)`}
+function popS(id,t,a,d=.6){const e=$(id),p=spring(lin(t,a,a+d));e.style.opacity=clamp(lin(t,a,a+d*.35));e.style.transform=`scale(${mix(.6,1,p)})`}
+function show(id,on){$(id).style.visibility=on?'visible':'hidden'}
+const waits=[];
+function vframe(id,dir,n,t0,t,rate=1){const img=$(id);const k=clamp(Math.floor((t-t0)*FPS*rate),0,n-1)+1;
+  const src=`${VDIR}/${dir}/${String(k).padStart(4,'0')}.jpg`;if(!img.src.endsWith(src)){img.src=src;waits.push(img.decode().catch(()=>{}));}}
+
+// ---------- collection grid ----------
+const GRID=['kantha-stitch-top','back-embroidery-white-shirt','kantha-stitch-shirt','handmade-embroidery-shirt','red-heart-shirt','lehriya-shirt',
+ 'white-leaf-shirt','beads-work-organza-saree','kantha-stitch-purple-shirt','peacock-feather-shirt','floral-back-embroidery-shirt','pocket-embroidery-shirt',
+ 'colourful-knots-shirt','patch-flower-shirt','kimono-embroidery-jacket','beads-embroidery-shirt','light-pink-organza-saree','knots-embroidery-shirt'];
+const CW=300,CH=400,GAP=30,GX=60,GY=450;
+const grid=$('grid');const gcards=GRID.map((s,i)=>{const c=document.createElement('div');c.className='card';
+  c.style.width=CW+'px';c.style.height=CH+'px';c.innerHTML=`<img src="assets/products/${s}.jpg">`;grid.appendChild(c);return c});
+const gx=i=>GX+(i%3)*(CW+GAP), gy=i=>GY+Math.floor(i/3)*(CH+GAP);
+const HERO_FROM=3; // sunflower shirt grows into the carousel
+
+// ---------- carousel ----------
+const CAR=[['handmade-embroidery-shirt','Handmade Embroidery Shirt','Linen · Hand embroidery'],
+ ['peacock-feather-shirt','Peacock Feather Shirt','The Mayur Shirt · Wearable art'],
+ ['kantha-stitch-shirt','Kantha Stitch Shirt','Handcrafted kantha'],
+ ['kimono-embroidery-jacket','Kimono Embroidery Jacket','Hand kantha stitch'],
+ ['beads-work-organza-saree','Beads Work Organza Saree','Organza · Beadwork'],
+ ['back-embroidery-white-shirt','Back Embroidery White Shirt','Floral embroidery · Cotton blend']];
+const BW=820,BH=1093,BX=(1080-BW)/2,BY=280,STEP=BW+50;
+const track=$('track');const ccards=CAR.map(([s])=>{const c=document.createElement('div');c.className='card';
+  c.style.width=BW+'px';c.style.height=BH+'px';c.style.top=BY+'px';c.style.borderRadius='40px';c.innerHTML=`<img src="assets/products/${s}.jpg">`;track.appendChild(c);return c});
+$('dots').innerHTML=CAR.map((_,i)=>`<span class="dot" id="dot${i}"></span>`).join('');
+const E0=10.0,SLIDE=1.35; // slide i active from E0+i*SLIDE
+
+// scene windows
+const T={A:[0,2],B:[2,4],C:[4,6],D:[6,10],E:[10,10+SLIDE*CAR.length],F:[0,0],G:[0,0]};
+T.F=[T.E[1],T.E[1]+2.4];T.G=[T.F[1],DUR];
+
 async function render(t){
-  const waits=[];
-  S.forEach(([id,a,b,vd,vn],k)=>{
-    const last=k==S.length-1, el=$(id);
-    const vis=t>=a-(k?XF:0)&&t<(last?99:b+XF);
-    if(!vis){el.style.opacity=0;return;}
-    // incoming scene fades in over the outgoing one (later DOM = on top)
-    el.style.opacity=k&&t<a?eo(lin(t,a-XF,a)):1;
-    if(vd){const img=$(id+'v');const n=clamp(Math.floor((t-a+XF)*FPS),0,vn-1)+1;
-      const src=`${VDIR}/${vd}/${String(n).padStart(4,'0')}.jpg`;
-      if(!img.src.endsWith(src)){img.src=src;waits.push(img.decode().catch(()=>{}));}
-      const z=1.0+.07*lin(t,a-XF,b+XF);img.style.width='1080px';img.style.height='1920px';
-      img.style.transform=`scale(${z})`;img.style.transformOrigin='50% 45%';}
-  });
-  // A hook: counter 0 -> 14
-  pop('Aeb',t,.05,.35,20);pop('Ah',t,.15,.4);pop('Ah2',t,.55,.4,30);
-  $('Anum').textContent=Math.round(eo(lin(t,.15,1.1))*14);
-  pop('Bh',t,2.25,.45);pop('Bs',t,2.6,.45,20);
-  $('Clogo').style.opacity=eo(lin(t,4.55,5.2));$('Clogo').style.transform=`scale(${.82+.18*eo(lin(t,4.55,5.4))})`;
-  pop('Cname',t,4.95,.5);pop('Ceb',t,5.3,.45,20);
-  pop('Gh',t,14.2,.5);pop('Gs',t,14.55,.45,20);
-  photo('Di',1254,1254,t,6.5,9.0,{cx:.53,cy:.52,z0:1.14,z1:1.0});
-  photo('Ei',1080,1124,t,9.0,11.5,{cx:.53,cy:.36,z0:1.0,z1:1.14});
-  (function(){const im=$('Fi'),p=eo(lin(t,11.5,13.8));const fitW=1080,fitH=1370*1080/1148;
-    const s=1.7-0.7*p; const w=fitW*s,h=fitH*s;
-    const x=540-w*.5, y=(1920*(.46*(1-p)+.40*p))-h*(.42*(1-p)+.5*p);
-    im.style.width=w+'px';im.style.height=h+'px';im.style.transform=`translate(${x}px,${y}px)`;})();
-  [['Dl',6.5],['El',9.0],['Fl',11.5]].forEach(([l,a])=>{pop(l,t,a+.15,.45);
-    const pr=$(l).querySelector('.price');const q=eo(lin(t,a+.55,a+.95));pr.style.opacity=q;pr.style.transform=`scale(${.7+.3*q})`;pr.style.transformOrigin='left center';});
-  {const q=eo(lin(t,11.7,12.1));$('Ft').style.opacity=q;$('Ft').style.transform=`translateX(${-60*(1-q)}px)`;}
-  $('Hlogo').style.opacity=eo(lin(t,16.1,16.7));$('Hlogo').style.transform=`scale(${.8+.2*eo(lin(t,16.1,16.9))}) rotate(${-8*(1-eo(lin(t,16.1,17.1)))}deg)`;
-  pop('Hname',t,16.4,.5);$('Hrule').style.width=(eo(lin(t,16.7,17.3))*320)+'px';
-  pop('Htag',t,16.8,.5,25);pop('Hcta',t,17.2,.45,25);pop('Hship',t,17.5,.45,15);pop('Hh',t,17.7,.45,15);
-  // gentle CTA pulse
-  if(t>18){$('Hcta').style.transform=`scale(${1+.03*Math.sin((t-18)*2*Math.PI*.9)})`;}
+  waits.length=0;
+  for(const k in T){const [a,b]=T[k];show(k,t>=a-.5&&t<b+.5);}
+  // ---- A: hook (no entrance; text springs in word by word)
+  show('A',t<2.5);vframe('Av','hoop',60,-.2,t);$('Av').style.transform=`scale(${1+.05*lin(t,0,2.4)})`;
+  pop('Aeb',t,.0,.5,24);pop('Aw1',t,.1,.6);pop('Aw2',t,.25,.6);pop('Aw3',t,.5,.6);pop('Aw4',t,.65,.6);
+  $('Anum').textContent=Math.round(eo(lin(t,.1,1.0))*14);
+  // ---- B: pushes up from the bottom over A (Figma "push")
+  {const p=eio(lin(t,1.75,2.2));show('B',t>=1.75&&t<4.6);$('B').style.transform=`translateY(${1920*(1-p)}px)`;
+   $('A').style.transform=`translateY(${-480*p}px)`;vframe('Bv','artisan',90,1.75,t);
+   pop('Bw1',t,2.2,.6);pop('Bw2',t,2.4,.6);pop('Bs',t,2.7,.6,30);}
+  // ---- C: circular mask reveal from centre
+  {const p=eio(lin(t,3.7,4.2));show('C',t>=3.7&&t<6.6);$('C').style.clipPath=`circle(${p*1150}px at 540px 960px)`;vframe('Cv','wide',90,3.7,t);
+   $('Cv').style.transform=`scale(${1.08-.06*lin(t,3.7,6.4)})`;
+   const lp=spring(lin(t,4.1,4.9));$('Clogo').style.opacity=lin(t,4.1,4.4);$('Clogo').style.transform=`scale(${mix(.5,1,lp)}) rotate(${-14*(1-lp)}deg)`;
+   pop('Cname',t,4.45,.6);pop('Ceb',t,4.75,.6,24);}
+  // ---- D: cream sheet slides up with rounded top, cards spring in, grid scrolls
+  {const p=eio(lin(t,5.7,6.2));show('D',t>=5.7&&t<10.4);$('D').style.transform=`translateY(${1920*(1-p)}px)`;
+   $('D').style.borderRadius=`${48*(1-lin(t,6.0,6.3))}px ${48*(1-lin(t,6.0,6.3))}px 0 0`;
+   $('C').style.transform=`scale(${1-.08*p})`;$('C').style.opacity=1-.6*p;
+   pop('Deb',t,6.15,.6,24);pop('Dh',t,6.3,.6,40);
+   const scroll=-eio(lin(t,7.6,9.2))*1180;
+   gcards.forEach((c,i)=>{const a=6.3+((i%3)*.07+Math.floor(i/3)*.11);const q=spring(lin(t,a,a+.75));
+     c.style.opacity=clamp(lin(t,a,a+.2));
+     let x=gx(i),y=gy(i)+scroll+(1-q)*260,w=CW,h=CH,s=mix(.85,1,q),r=28;
+     if(i===HERO_FROM){ // smart-animate into the carousel card
+       const m=eio(lin(t,9.35,10.0));x=mix(x,BX,m);y=mix(gy(i)+scroll,BY,m)+(1-q)*260*(1-m);w=mix(CW,BW,m);h=mix(CH,BH,m);r=mix(28,40,m);c.style.zIndex=m>0?5:0;}
+     else{c.style.opacity=Math.min(c.style.opacity,1-lin(t,9.35,9.75));}
+     c.style.left=x+'px';c.style.top=y+'px';c.style.width=w+'px';c.style.height=h+'px';c.style.borderRadius=r+'px';c.style.transform=`scale(${s})`;});
+   $('Dhead').style.opacity=1-lin(t,9.35,9.7);}
+  // ---- E: swipe carousel with spring
+  {show('E',t>=10.0&&t<T.E[1]+.6);
+   // continuous index: springs from i to i+1 at each slide boundary
+   let idx=0;for(let i=1;i<CAR.length;i++)idx+=spring(lin(t,E0+i*SLIDE-.45,E0+i*SLIDE+.35));
+   ccards.forEach((c,i)=>{const d=i-idx;c.style.left=(BX+d*STEP)+'px';c.style.transform=`scale(${1-Math.min(1,Math.abs(d))*.12})`;
+     c.style.opacity=Math.abs(d)>1.6?0:1;
+     c.querySelector('img').style.transform=`scale(${1.06-.06*clamp(1-Math.abs(d))})translateX(${-d*60}px)`;});
+   const cur=Math.round(idx);const sp=lin(t,E0+cur*SLIDE-.1,E0+cur*SLIDE+.35);const k=cur;
+   $('Ename').textContent=CAR[k][1];$('Edet').textContent=CAR[k][2];
+   const tp=spring(lin(t,E0+k*SLIDE-.05,E0+k*SLIDE+.5));const fadeOut=k<CAR.length-1?1-lin(t,E0+(k+1)*SLIDE-.5,E0+(k+1)*SLIDE-.4):1;
+   $('Ename').style.opacity=Math.min(clamp(tp*1.5),fadeOut);$('Ename').style.transform=`translateY(${40*(1-tp)}px)`;
+   $('Edet').style.opacity=Math.min(clamp(lin(t,E0+k*SLIDE+.1,E0+k*SLIDE+.35)),fadeOut);
+   CAR.forEach((_,i)=>{const on=clamp(1-Math.abs(i-idx));const d=$('dot'+i);d.style.width=mix(14,44,on)+'px';d.style.background=on>.5?'#775a19':'#d1c5b4';});
+   $('Einfo').style.opacity=lin(t,9.9,10.2);}
+  // ---- F: the active card expands to full screen and becomes the workshop
+  {const [a]=T.F;const m=eio(lin(t,a-.45,a+.05));show('F',t>=a-.45&&t<T.G[0]+.6);
+   const x=mix(BX,0,m),y=mix(BY,0,m),w=mix(BW,1080,m),h=mix(BH,1920,m),r=mix(40,0,m);
+   $('F').style.clipPath=`inset(${y}px ${1080-x-w}px ${1920-y-h}px ${x}px round ${r}px)`;
+   vframe('Fv','wide2',60,a-.45,t,.85);$('Fv').style.transform=`scale(${1.1-.08*lin(t,a-.45,T.F[1])})`;
+   const n=Math.round(eo(lin(t,a+.1,a+.9))*40);$('Fnum').textContent=n+(n>=40?'+':'');
+   popS('Fnum',t,a+.05,.6);pop('Fh',t,a+.3,.6,30);['ch1','ch2','ch3'].forEach((c,i)=>popS(c,t,a+.6+i*.12,.55));}
+  // ---- G: end card wipes in from the right
+  {const [a]=T.G;const p=eio(lin(t,a-.45,a+.05));show('G',t>=a-.45);$('G').style.transform=`translateX(${1080*(1-p)}px)`;
+   $('F').style.transform=`translateX(${-300*p}px)`;
+   const lp=spring(lin(t,a,a+.8));$('Glogo').style.opacity=lin(t,a,a+.3);$('Glogo').style.transform=`scale(${mix(.5,1,lp)}) rotate(${-14*(1-lp)}deg)`;
+   pop('Gname',t,a+.3,.6);$('Grule').style.width=(eo(lin(t,a+.6,a+1.2))*320)+'px';
+   pop('Gtag',t,a+.7,.6,30);popS('Gcta',t,a+1.1,.6);pop('Gship',t,a+1.4,.5,20);pop('Gh',t,a+1.6,.5,20);
+   if(t>a+2)$('Gcta').style.transform=`scale(${1+.03*Math.sin((t-a-2)*2*Math.PI*.9)})`;}
   await Promise.all(waits);
 }
-function photo(id,iw,ih,t,a,b,o){const im=$(id),p=lin(t,a-XF,b+XF);const base=Math.max(1080/iw,1920/ih);
-  const s=base*(o.z0+(o.z1-o.z0)*p);const w=iw*s,h=ih*s;
-  let x=540-w*o.cx,y=960-h*o.cy;x=clamp(x,1080-w,0);y=clamp(y,1920-h,0);
-  im.style.width=w+'px';im.style.height=h+'px';im.style.transform=`translate(${x}px,${y}px)`;}
 window.render=render;window.DUR=DUR;
 </script></body></html>

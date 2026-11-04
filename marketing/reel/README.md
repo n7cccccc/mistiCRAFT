@@ -1,15 +1,25 @@
 # mistiCRAFT Instagram Reel
 
-- `misticraft-reel.mp4`: 1080×1920, 30 fps, 20 s, H.264 + AAC, ready to upload
-- `cover.jpg`: cover frame (Sunflower Camp Shirt)
+- `misticraft-reel.mp4`: 1080×1920, 30 fps, 24 s, H.264 + AAC, ready to upload
+- `cover.jpg`: cover frame (The Collection grid)
 - `caption.txt`: suggested caption and hashtags
-- `assets/`: atelier video, product photos, logo (gold/cream, upscaled from the site's logo)
+- `products.json`: the 20 shop products used (name, detail, image), collected from the shop page export
+- `assets/`: atelier video, product photos (`assets/products/`), logo
 - `reel.html`: the animation; `render(t)` draws the frame at time t
 - `render.js`: renders frames with Playwright
 
-## Timeline
-0–2 s hook "14 hours of hand embroidery" (hoop) · 2–4.5 s artisan · 4.5–6.5 s logo over the workshop ·
-6.5–14 s three products with name + MRP · 14–16 s "40+ women artisans" · 16–20 s end card
+## Timeline (Figma-style motion: spring easing, push, mask, smart-animate)
+| Time | Scene | Transition in |
+|---|---|---|
+| 0–2 s | Hook: "14 hours of hand embroidery" on the hoop close-up | — |
+| 2–4 s | Artisan: "Stitched by hand" | push up |
+| 4–6 s | Logo + "Udaipur · Since 2018" over the workshop | circular mask |
+| 6–10 s | "The Collection": 18 cards spring in, grid scrolls | bottom sheet |
+| 10–18 s | Swipe carousel of 6 products (name + detail, page dots) | smart-animate from grid card |
+| 18–20.5 s | "40+ women artisans" + value chips | card expands to full screen |
+| 20.5–24 s | End card: logo, tagline, CTA, @misticraft | push from right |
+
+No prices are shown.
 
 ## Rebuild
 ```
