@@ -2,195 +2,135 @@
 <html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#1b1c19;--gold:#e9c176;--gold2:#c5a059;--bronze:#775a19;--cream:#fbf9f4;--teal:#2a6865;--terra:#9c4421;}
+  :root{--ink:#1b1c19;--gold:#e9c176;--cream:#fbf9f4}
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{width:1080px;height:1920px;overflow:hidden;background:var(--ink)}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#1b1c19}
   #stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Montserrat,sans-serif;color:var(--cream)}
-  .layer{position:absolute;inset:0}
+  .scene{position:absolute;inset:0;overflow:hidden;opacity:0}
+  .scene img.media{position:absolute;left:0;top:0;will-change:transform}
+  .shade{position:absolute;inset:0}
+  .txt{position:absolute;left:0;width:100%;text-align:center;padding:0 90px}
+  .eyebrow{font-size:30px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;color:var(--gold)}
   .serif{font-family:'Playfair Display',serif}
-  .center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-  .eyebrow{font-size:30px;letter-spacing:.32em;text-transform:uppercase;font-weight:600;color:var(--gold)}
-  .big{font-family:'Playfair Display',serif;font-size:150px;line-height:1.02;font-weight:700;letter-spacing:-.01em}
+  .h{font-family:'Playfair Display',serif;font-weight:700;font-size:104px;line-height:1.05;text-shadow:0 4px 30px rgba(0,0,0,.45)}
   .it{font-style:italic;font-weight:400;color:var(--gold)}
-  .card{width:820px;padding:56px 60px;border:2px solid rgba(233,193,118,.55);border-radius:12px;background:rgba(27,28,25,.55);text-align:left;position:absolute;left:130px}
-  .card h3{font-family:'Playfair Display',serif;font-size:66px;font-weight:600;line-height:1.1;margin-top:18px}
-  .card p{font-size:34px;line-height:1.45;color:#d9d3c6;margin-top:18px}
-  .num{font-size:28px;font-weight:700;letter-spacing:.3em;color:var(--gold)}
-  .tech{font-family:'Playfair Display',serif;font-size:118px;font-weight:600;line-height:1.25;white-space:nowrap}
-  .grain{position:absolute;inset:0;pointer-events:none;opacity:.07;background-image:radial-gradient(rgba(255,255,255,.6) 1px,transparent 1px);background-size:6px 6px}
+  .sub{font-size:36px;line-height:1.4;font-weight:500;margin-top:22px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+  .label{position:absolute;left:80px;bottom:430px;text-align:left}
+  .label .name{font-family:'Playfair Display',serif;font-size:84px;font-weight:700;line-height:1.05;text-shadow:0 4px 28px rgba(0,0,0,.5)}
+  .label .eyebrow{text-shadow:0 2px 12px rgba(0,0,0,.6)}
+  .bar{height:4px;background:var(--gold);margin:22px 0 0}
+  .blurbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(40px) brightness(.55)}
+  #flash{position:absolute;inset:0;background:#fbf9f4;opacity:0;pointer-events:none}
 </style></head>
 <body><div id="stage">
-  <div class="layer" id="bg"></div>
-  <svg class="layer" id="motif" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
-  <div class="layer" id="content"></div>
-  <div class="grain"></div>
+  <!-- A: logo over workshop -->
+  <div class="scene" id="A"><img class="media" id="Av">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.88) 0%,rgba(27,28,25,.62) 45%,rgba(27,28,25,.9) 100%)"></div>
+    <div class="txt" style="top:520px"><img id="Alogo" src="assets/logo-gold.png" style="width:380px;height:380px"></div>
+    <div class="txt" style="top:950px"><div class="h" id="Aname" style="font-size:130px">misti<span style="color:var(--gold)">CRAFT</span></div>
+      <div class="eyebrow" id="Aeb" style="margin-top:30px">Udaipur · Rajasthan</div></div>
+  </div>
+  <!-- B: artisan -->
+  <div class="scene" id="B"><img class="media" id="Bv">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.0) 45%,rgba(27,28,25,.85) 88%)"></div>
+    <div class="txt" style="top:1180px"><div class="h" id="Bh">Stitched <span class="it">by hand</span></div>
+      <div class="sub" id="Bs">by the women artisans of Udaipur</div></div>
+  </div>
+  <!-- C: hoop -->
+  <div class="scene" id="C"><img class="media" id="Cv">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.8) 0%,rgba(27,28,25,0) 35%)"></div>
+    <div class="txt" style="top:260px"><div class="eyebrow" id="Ceb">Every motif</div>
+      <div class="h" id="Ch" style="margin-top:18px">One thread<br><span class="it">at a time</span></div></div>
+  </div>
+  <!-- D: sunflower shirt -->
+  <div class="scene" id="D"><img class="media" id="Di" src="assets/sunflower-shirt.png">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 50%,rgba(27,28,25,.8) 85%)"></div>
+    <div class="label" id="Dl"><div class="eyebrow">Hand-embroidered</div><div class="name">Sunflower<br>Camp Shirt</div><div class="bar" id="Db"></div></div>
+  </div>
+  <!-- E: wildflower shirt -->
+  <div class="scene" id="E"><img class="media" id="Ei" src="assets/wildflower-shirt.jpg">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 50%,rgba(27,28,25,.75) 85%)"></div>
+    <div class="label" id="El"><div class="eyebrow">Hand-embroidered</div><div class="name">Wildflower<br>Linen Shirt</div><div class="bar" id="Eb"></div></div>
+  </div>
+  <!-- F: mint top -->
+  <div class="scene" id="F"><div class="blurbg" style="background-image:url(assets/mint-top.png)"></div><img class="media" id="Fi" src="assets/mint-top.png">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,0) 45%,rgba(27,28,25,.92) 82%)"></div>
+    <div class="label" id="Fl"><div class="eyebrow">Hand-embroidered</div><div class="name">Mint<br>Running-Stitch Top</div><div class="bar" id="Fb"></div></div>
+  </div>
+  <!-- G: workshop wide -->
+  <div class="scene" id="G"><img class="media" id="Gv">
+    <div class="shade" style="background:linear-gradient(180deg,rgba(27,28,25,.85) 0%,rgba(27,28,25,.2) 40%)"></div>
+    <div class="txt" style="top:250px"><div class="h" id="Gh" style="font-size:96px">40+ women<br><span class="it">artisans</span></div>
+      <div class="sub" id="Gs">Fair wages · Healthcare · Organic cotton</div></div>
+  </div>
+  <!-- H: end card -->
+  <div class="scene" id="H" style="background:radial-gradient(900px 1100px at 540px 860px,#2a3a36 0%,#1b1c19 70%)">
+    <div class="txt" style="top:400px"><img id="Hlogo" src="assets/logo-gold.png" style="width:340px;height:340px"></div>
+    <div class="txt" style="top:790px"><div class="h" id="Hname" style="font-size:124px">misti<span style="color:var(--gold)">CRAFT</span></div>
+      <div style="height:3px;background:var(--gold);margin:36px auto;width:0" id="Hrule"></div>
+      <div class="serif it" id="Htag" style="font-size:60px;line-height:1.25">Heritage, hand-stitched<br>for the modern world.</div>
+      <div id="Hcta" style="display:inline-block;margin-top:70px;padding:28px 64px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:34px;letter-spacing:.18em;text-transform:uppercase">Shop now · Link in bio</div>
+      <div class="eyebrow" id="Hh" style="margin-top:44px;text-transform:none;letter-spacing:.15em;font-size:36px">@misticraft</div></div>
+  </div>
+  <div id="flash"></div>
 </div>
 <script>
-const W=1080,H=1920,DUR=15;
+const FPS=30,DUR=20;
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const lin=(t,a,b)=>clamp((t-a)/(b-a));
 const eo=x=>1-Math.pow(1-x,3);
-const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
-// fade in at a over d, fade out at b over d
-const win=(t,a,b,d=.45)=>Math.min(eo(lin(t,a,a+d)),1-eio(lin(t,b-d,b)));
-
-// ---------- motif: mandala built from petals, drawn as a running stitch ----------
-const svg=document.getElementById('motif');
-const NS='http://www.w3.org/2000/svg';
-function el(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e}
-const mandala=el('g',{});svg.appendChild(mandala);
-function petal(r1,r2,w){ // teardrop from center radius r1 to r2
-  return `M0,${-r1} C${w},${-(r1+r2)*.45} ${w*.6},${-r2*.92} 0,${-r2} C${-w*.6},${-r2*.92} ${-w},${-(r1+r2)*.45} 0,${-r1} Z`;
-}
-const rings=[
-  {n:8,r1:40,r2:200,w:70,c:'#e9c176',sw:5},
-  {n:16,r1:190,r2:330,w:45,c:'#c5a059',sw:4},
-  {n:24,r1:330,r2:420,w:26,c:'#e9c176',sw:3},
-];
-const stitchPaths=[];
-rings.forEach((rg,ri)=>{
-  for(let i=0;i<rg.n;i++){
-    const p=el('path',{d:petal(rg.r1,rg.r2,rg.w),fill:'none',stroke:rg.c,'stroke-width':rg.sw,'stroke-linecap':'round',transform:`rotate(${i*360/rg.n+(ri%2?180/rg.n:0)})`});
-    mandala.appendChild(p);stitchPaths.push({p,ri,i,n:rg.n});
-  }
-});
-[120,440,470].forEach((r,k)=>{const c=el('circle',{r,fill:'none',stroke:'#e9c176','stroke-width':k==0?3:2});mandala.appendChild(c);stitchPaths.push({p:c,ri:k==0?0:3,i:0,n:1})});
-const dots=el('g',{});mandala.appendChild(dots);
-for(let i=0;i<48;i++){const a=i/48*Math.PI*2;dots.appendChild(el('circle',{cx:Math.cos(a)*500,cy:Math.sin(a)*500,r:6,fill:'#e9c176'}))}
-stitchPaths.forEach(s=>{s.len=s.p.getTotalLength();});
-
-// thread line (scene 1): a long sinuous needle path across the screen
-const threadD='M-60,1500 C200,1350 160,1050 420,1000 S760,1180 860,900 S700,560 540,520 S300,420 360,300';
-const thread=el('path',{d:threadD,fill:'none',stroke:'#e9c176','stroke-width':6,'stroke-linecap':'round'});
-svg.appendChild(thread);const threadLen=thread.getTotalLength();
-const needle=el('g',{});needle.appendChild(el('line',{x1:0,y1:-70,x2:0,y2:70,stroke:'#fbf9f4','stroke-width':7,'stroke-linecap':'round'}));
-needle.appendChild(el('ellipse',{cx:0,cy:-52,rx:3,ry:10,fill:'#1b1c19'}));svg.appendChild(needle);
-
-// border frame (stitched)
-const frame=el('rect',{x:60,y:60,width:960,height:1800,rx:18,fill:'none',stroke:'#c5a059','stroke-width':3});svg.appendChild(frame);
-const frameLen=2*(960+1800);
-
-// ---------- content ----------
-const C=document.getElementById('content');
-C.innerHTML=`
-<div class="layer center" id="s1"><div class="eyebrow" id="s1e">Udaipur · Rajasthan</div>
-  <div class="big" style="margin-top:40px"><span id="s1a">One thread.</span><br><span class="it" id="s1b">One story.</span></div></div>
-<div class="layer center" id="s2">
-  <div class="big" id="s2a" style="font-size:240px;color:var(--gold)">14</div>
-  <div class="eyebrow" id="s2b" style="font-size:40px;color:var(--cream);letter-spacing:.28em">hours of hand embroidery</div>
-  <div class="serif it" id="s2c" style="font-size:72px;margin-top:70px;line-height:1.25">by a single artisan,<br>for a single piece.</div></div>
-<div class="layer" id="s3">
-  <div class="eyebrow" id="s3e" style="position:absolute;top:330px;width:100%;text-align:center">Slow fashion, made right</div>
-  <div class="card" id="c1"><div class="num">01</div><h3>GOTS Organic Cotton</h3><p>Ethically sourced, biodegradable fibres.</p></div>
-  <div class="card" id="c2"><div class="num">02</div><h3>Fair-Wage Workshop</h3><p>Healthcare &amp; fair wages for 40+ women artisans.</p></div>
-  <div class="card" id="c3"><div class="num">03</div><h3>Shipped Worldwide</h3><p>From our Udaipur atelier to your door.</p></div>
-</div>
-<div class="layer" id="s4">
-  <div class="eyebrow" id="s4e" style="position:absolute;top:360px;width:100%;text-align:center">Ancestral techniques</div>
-  <div id="techs" style="position:absolute;left:0;width:100%;top:560px;text-align:center"></div>
-</div>
-<div class="layer center" id="s5">
-  <div class="serif" id="logo" style="font-size:150px;font-weight:700;letter-spacing:-.01em">misti<span style="color:var(--gold)">CRAFT</span></div>
-  <div style="width:0;height:3px;background:var(--gold);margin:40px auto" id="rule"></div>
-  <div class="serif it" id="tag" style="font-size:66px;line-height:1.25;color:var(--cream)">Heritage, hand-stitched<br>for the modern world.</div>
-  <div id="cta" style="margin-top:90px;padding:30px 64px;border-radius:999px;background:var(--gold);color:var(--ink);font-weight:700;font-size:36px;letter-spacing:.18em;text-transform:uppercase">Shop the collection</div>
-  <div class="eyebrow" id="handle" style="margin-top:50px;letter-spacing:.2em;text-transform:none;font-size:36px">@misticraft</div>
-</div>`;
-const techs=['Embroidery','Aari','Zardozi','Beadwork','Patch Work','Block Print','Hand-Painted'];
-const T=document.getElementById('techs');
-techs.forEach((s,i)=>{const d=document.createElement('div');d.className='tech';d.id='t'+i;d.textContent=s;T.appendChild(d)});
 const $=id=>document.getElementById(id);
-const set=(id,o,y=0,s=1,extra='')=>{const e=$(id);e.style.opacity=o;e.style.transform=`translateY(${y}px) scale(${s}) ${extra}`};
-
-function render(t){
-  // background gradient drifts between ink and deep teal/terra
-  const g1=`radial-gradient(1200px 1400px at ${540+Math.sin(t*.4)*200}px ${700+t*40}px, rgba(42,104,101,${.35+.15*Math.sin(t*.7)}), transparent 70%)`;
-  const g2=`radial-gradient(1000px 1000px at ${300+t*30}px ${1700-t*30}px, rgba(156,68,33,.28), transparent 70%)`;
-  $('bg').style.background=`${g1},${g2},#1b1c19`;
-
-  // frame stitches in over first 1.5s and stays (running stitch dash)
-  const fp=eo(lin(t,0,1.6));
-  frame.setAttribute('stroke-dasharray',`18 14`);
-  frame.style.opacity=.75*fp*(1-lin(t,14.4,15)*0);
-  frame.setAttribute('stroke-dashoffset',-t*20);
-  frame.style.clipPath='none';
-  frame.setAttribute('pathLength',frameLen);
-  // reveal with mask-ish trick: scale stroke alpha
-  frame.style.strokeOpacity=fp;
-
-  // ---- scene 1 (0 – 3.2): thread + needle
-  const s1=win(t,0,3.2);
-  const tp=eo(lin(t,0.1,2.6));
-  thread.setAttribute('stroke-dasharray',`${threadLen}`);
-  thread.setAttribute('stroke-dashoffset',threadLen*(1-tp));
-  thread.style.opacity=s1*.9;
-  const pt=thread.getPointAtLength(Math.max(1,threadLen*tp)),pt2=thread.getPointAtLength(Math.max(0,threadLen*tp-4));
-  const ang=Math.atan2(pt.y-pt2.y,pt.x-pt2.x)*180/Math.PI+90;
-  needle.setAttribute('transform',`translate(${pt.x},${pt.y}) rotate(${ang})`);
-  needle.style.opacity=s1*(1-lin(t,2.5,2.8));
-  set('s1',s1);
-  set('s1e',eo(lin(t,.2,.9)),30*(1-eo(lin(t,.2,.9))));
-  set('s1a',eo(lin(t,.5,1.2)),50*(1-eo(lin(t,.5,1.2))));
-  $('s1a').style.display='inline-block';$('s1b').style.display='inline-block';
-  set('s1b',eo(lin(t,1.2,1.9)),50*(1-eo(lin(t,1.2,1.9))));
-
-  // ---- mandala: blooms in scene 2, rotates behind 3-4, returns big for 5
-  const mIn=lin(t,2.8,5.2);
-  let mScale,mX=540,mY=960,mOp;
-  if(t<9){mScale=.9+.1*eo(mIn);mOp=1-.6*eo(lin(t,4.2,5.0));}
-  else if(t<12.6){mScale=1-.0*lin(t,9,12.6);mOp=1-.75*eo(lin(t,9,9.8));}
-  else{mScale=1;mOp=.25+.12*eo(lin(t,12.6,13.6));}
-  if(t>=6.2&&t<12.6){mOp=Math.min(mOp,1-.75*eo(lin(t,6.2,6.9)));}
-  mandala.setAttribute('transform',`translate(${mX},${mY}) scale(${mScale}) rotate(${t*6})`);
-  mandala.style.opacity=mOp*(t<2.8?0:1);
-  stitchPaths.forEach(s=>{
-    const start=2.8+s.ri*.45+(s.i/s.n)*.6, p=eo(lin(t,start,start+1.0));
-    // after the reveal, switch to running-stitch dashes
-    if(p<1){s.p.setAttribute('stroke-dasharray',`${s.len*p} ${s.len}`);s.p.setAttribute('stroke-dashoffset',0);}
-    else{s.p.setAttribute('stroke-dasharray',s.ri==3?'10 10':'none');s.p.setAttribute('stroke-dashoffset',-t*15);}
+const pop=(id,t,a,d=.5,dy=40)=>{const p=eo(lin(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${dy*(1-p)}px)`};
+const XF=.3; // crossfade length
+// [id, start, end, videoFolder, videoFrames]
+const S=[['A',0,3.0,'wide',90],['B',3.0,6.0,'artisan',90],['C',6.0,8.0,'hoop',60],
+         ['D',8.0,10.4],['E',10.4,12.8],['F',12.8,15.2],['G',15.2,17.2,'wide2',60],['H',17.2,20]];
+const VDIR=window.VDIR||'frames';
+async function render(t){
+  const waits=[];
+  S.forEach(([id,a,b,vd,vn],k)=>{
+    const last=k==S.length-1;
+    const op=Math.min(lin(t,a-(k?XF:0)+ (k?0:-1),a+(k?0:0)+.0001)*(k?1:1), last?1:1-lin(t,b,b+XF));
+    const vis=t>=a-(k?XF:0)&&t<b+(last?1:XF);
+    const el=$(id);el.style.opacity=vis?(k==0?1-lin(t,b,b+XF):op):0;
+    if(k>0&&vis&&t<a)el.style.opacity=lin(t,a-XF,a);
+    if(!vis)return;
+    const lt=t-a;
+    if(vd){const img=$(id+'v');const n=clamp(Math.floor(lt*FPS),0,vn-1)+1;
+      const src=`${VDIR}/${vd}/${String(n).padStart(4,'0')}.jpg`;
+      if(!img.src.endsWith(src)){img.src=src;waits.push(img.decode().catch(()=>{}));}
+      const z=1.0+.06*lin(t,a-XF,b+XF);img.style.width='1080px';img.style.height='1920px';
+      img.style.transform=`scale(${z})`;img.style.transformOrigin='50% 45%';}
   });
-  dots.style.opacity=eo(lin(t,4.3,5.2));
-
-  // ---- scene 2 (3.0 – 6.4)
-  const s2=win(t,3.0,6.4);
-  set('s2',s2);
-  const n=Math.round(clamp(lin(t,3.1,4.2))*14);
-  $('s2a').textContent=n;
-  set('s2a',eo(lin(t,3.1,3.6)),0,.8+.2*eo(lin(t,3.1,3.8)));
-  set('s2b',eo(lin(t,3.7,4.3)),30*(1-eo(lin(t,3.7,4.3))));
-  set('s2c',eo(lin(t,4.4,5.1)),40*(1-eo(lin(t,4.4,5.1))));
-  // dim the mandala's center under the number
-  $('s2').style.background=`radial-gradient(640px 700px at 540px 960px, rgba(27,28,25,${.9*s2}), transparent 75%)`;
-
-  // ---- scene 3 (6.2 – 9.8): cards slide in stacked
-  const s3=win(t,6.2,9.8);
-  set('s3',s3);
-  set('s3e',eo(lin(t,6.3,6.9)),20*(1-eo(lin(t,6.3,6.9))));
-  [['c1',6.5,560],['c2',7.3,960],['c3',8.1,1360]].forEach(([id,a,top])=>{
-    const p=eo(lin(t,a,a+.6));$(id).style.top=top+'px';
-    $(id).style.opacity=p;$(id).style.transform=`translateX(${(1-p)*160}px)`;
-  });
-
-  // ---- scene 4 (9.6 – 12.8): technique list scroll with highlight
-  const s4=win(t,9.6,12.8);
-  set('s4',s4);
-  set('s4e',eo(lin(t,9.7,10.3)),20*(1-eo(lin(t,9.7,10.3))));
-  const prog=lin(t,9.8,12.5)*(techs.length-1);
-  const lineH=148;
-  T.style.transform=`translateY(${(3*lineH)-prog*lineH}px)`;
-  techs.forEach((s,i)=>{const d=Math.abs(i-prog);const e=$('t'+i);
-    e.style.opacity=clamp(1-d*.38,.08,1);e.style.color=d<.5?'#e9c176':'#fbf9f4';
-    e.style.transform=`scale(${1-clamp(d,0,3)*.12})`;});
-
-  // ---- scene 5 (12.6 – 15): logo + CTA
-  const s5=eo(lin(t,12.6,13.1));
-  set('s5',s5);
-  set('logo',eo(lin(t,12.7,13.3)),40*(1-eo(lin(t,12.7,13.3))),1+.04*(1-eo(lin(t,12.7,13.6))));
-  $('rule').style.width=(eo(lin(t,13.1,13.8))*360)+'px';
-  set('tag',eo(lin(t,13.3,13.9)),30*(1-eo(lin(t,13.3,13.9))));
-  set('cta',eo(lin(t,13.7,14.2)),0,.85+.15*eo(lin(t,13.7,14.2))+.02*Math.sin(t*9)*lin(t,14.2,14.4));
-  set('handle',eo(lin(t,14,14.5)));
+  // stack order: later scene on top during crossfades (DOM order already ascending)
+  // --- A
+  pop('Alogo',t,.15,.8,0);$('Alogo').style.transform=`scale(${.85+.15*eo(lin(t,.15,1.1))})`;
+  pop('Aname',t,.7,.6);pop('Aeb',t,1.1,.6,20);
+  // --- B / C / G text
+  pop('Bh',t,3.35,.55);pop('Bs',t,3.75,.55,20);
+  pop('Ceb',t,6.2,.45,20);pop('Ch',t,6.4,.5);
+  pop('Gh',t,15.4,.55);pop('Gs',t,15.8,.5,20);
+  // --- product photos (Ken Burns)
+  photo('Di',1254,1254,t,8.0,10.4,{cx:.53,cy:.52,z0:1.12,z1:1.0});
+  photo('Ei',1080,1124,t,10.4,12.8,{cx:.53,cy:.38,z0:1.0,z1:1.12});
+  // F: start tight on the embroidery, pull back to show the full top
+  (function(){const im=$('Fi'),p=eo(lin(t,12.8,15.0));const fitW=1080,fitH=1370*1080/1148;
+    const s=1.7-0.7*p; const w=fitW*s,h=fitH*s;const cyImg=.42; // focus point (embroidery)
+    const x=540-w*.5, y=(1920*(.46*(1-p)+.40*p))-h*(cyImg*(1-p)+.5*p);
+    im.style.width=w+'px';im.style.height=h+'px';im.style.transform=`translate(${x}px,${y}px)`;})();
+  [['Dl','Db',8.0],['El','Eb',10.4],['Fl','Fb',12.8]].forEach(([l,bar,a])=>{pop(l,t,a+.25,.5);$(bar).style.width=(eo(lin(t,a+.5,a+1.1))*220)+'px'});
+  // --- H
+  $('Hlogo').style.opacity=eo(lin(t,17.35,18.0));$('Hlogo').style.transform=`scale(${.8+.2*eo(lin(t,17.35,18.2))}) rotate(${-8*(1-eo(lin(t,17.35,18.4)))}deg)`;
+  pop('Hname',t,17.7,.55);$('Hrule').style.width=(eo(lin(t,18.0,18.6))*320)+'px';
+  pop('Htag',t,18.1,.55,25);pop('Hcta',t,18.5,.5,25);pop('Hh',t,18.8,.5,15);
+  // white flash on the cut from video to products
+  $('flash').style.opacity=0*Math.max(0,1-Math.abs(t-8.0)/.12);
+  await Promise.all(waits);
 }
+// cover-fit with zoom between z0->z1 around focus (cx,cy as fraction of image)
+function photo(id,iw,ih,t,a,b,o){const im=$(id),p=lin(t,a-XF,b+XF);const base=Math.max(1080/iw,1920/ih);
+  const s=base*(o.z0+(o.z1-o.z0)*p);const w=iw*s,h=ih*s;
+  let x=540-w*o.cx,y=960-h*o.cy;x=clamp(x,1080-w,0);y=clamp(y,1920-h,0);
+  im.style.width=w+'px';im.style.height=h+'px';im.style.transform=`translate(${x}px,${y}px)`;}
 window.render=render;window.DUR=DUR;
-render(0);
 </script></body></html>

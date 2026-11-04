@@ -1,10 +1,21 @@
 # mistiCRAFT Instagram Reel
 
-- `misticraft-reel.mp4` — 1080×1920, 30 fps, 15 s, H.264 + AAC (ready to upload)
-- `cover.jpg` — cover frame
-- `caption.txt` — suggested caption + hashtags
-- `reel.html` — the animation source (`render(t)` draws frame at time t)
-- `render.js` — renders frames with Playwright: `node render.js <out_dir>`
+- `misticraft-reel.mp4`: 1080×1920, 30 fps, 20 s, H.264 + AAC, ready to upload
+- `cover.jpg`: cover frame (Sunflower Camp Shirt)
+- `caption.txt`: suggested caption and hashtags
+- `assets/`: atelier video, product photos, logo (gold/cream, upscaled from the site's logo)
+- `reel.html`: the animation; `render(t)` draws the frame at time t
+- `render.js`: renders frames with Playwright
 
-Rebuild: render frames, then
-`ffmpeg -framerate 30 -i <out_dir>/f%04d.png -i audio.wav -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -shortest misticraft-reel.mp4`
+## Timeline
+0–3 s logo over the workshop · 3–6 s artisan "Stitched by hand" · 6–8 s hoop close-up ·
+8–15 s three products · 15–17 s "40+ women artisans" · 17–20 s end card with CTA
+
+## Rebuild
+```
+V=assets/atelier.mp4
+seg(){ mkdir -p vf/$1; ffmpeg -ss $2 -t $3 -i $V -vf "fps=30,crop=405:720:$4-202:0,scale=1080:1920:flags=lanczos,unsharp=5:5:0.6" -q:v 2 vf/$1/%04d.jpg; }
+seg wide 0 3 640; seg artisan 3 3 560; seg hoop 6 2 780; seg wide2 8 2 640
+node render.js vf frames
+ffmpeg -framerate 30 -i frames/f%04d.jpg -i music.wav -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -shortest misticraft-reel.mp4
+```
